@@ -51,7 +51,9 @@ class FaceDetector:
         :param output_handler: handler for wether a face and or eyes are detected.
         """
         self.callback = output_handler
-        Thread(target=self.detection_thread).start()
+        thread = Thread(target=self.detection_thread)
+	thread.daemon = True
+	thread.start()
 
     def detection_thread(self):
         ret_val, image_frame = self.camera.read()#read first frame, camera delays on first read significantly
