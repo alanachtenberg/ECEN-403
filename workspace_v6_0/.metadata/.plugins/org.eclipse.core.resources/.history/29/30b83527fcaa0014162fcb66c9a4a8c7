@@ -1,0 +1,32 @@
+/*
+ * main.c
+ *
+ *  Created on: Feb 2, 2015
+ *      Author: Alan
+ */
+
+
+/*
+ * Stellaris Tri-color LED, Software toggle
+ *
+ * This program will toggle inside of a loop to start and stop the led blinking
+ *
+ * MCU Model Number: LM4120H5QR, important for project target/compiler
+
+ * Pin Numbers
+ *
+ * PF1 - RED LED
+ * PF2 - BLUE LED
+ * PF3 - GREEN LED
+ */
+
+//---------------INCLUDES-----------------
+
+#include <inc/hw_types.h>
+//common types and macros such as tBoolean and HWREG(x)
+#include <inc/hw_memmap.h>
+//Macros defining memory mapping of the stellaris, including peripheral base address locations
+#include <driverlib/sysctl.h>
+//Defines and macros for System Control API of DriverLib, including SysCtlClockSet and SysCtlClockGet
+#include <driverlib/gpio.h>
+//Defines and macros for GPIO api. This includes functions GPIOPinTypePWM & GPIOPinWrite

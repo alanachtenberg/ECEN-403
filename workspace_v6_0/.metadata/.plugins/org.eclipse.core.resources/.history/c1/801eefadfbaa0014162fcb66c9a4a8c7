@@ -1,0 +1,21 @@
+/*
+ * main.c
+ *
+ *  Created on: Feb 2, 2015
+ *      Author: Alan
+ */
+
+
+/*
+ * Stellaris Tri-color LED, Software toggle
+ *
+ * This program will toggle inside of a loop to start and stop the led blinking
+ *
+ * MCU Model Number: LM4120H5QR, important for project target/compiler
+
+ * Pin Numbers
+ *
+ * PF1 - RED LED
+ * PF2 - BLUE LED
+ * PF3 - GREEN LED
+ */
