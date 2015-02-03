@@ -1,0 +1,41 @@
+/*
+ * main.c
+ *
+ *  Created on: Feb 2, 2015
+ *      Author: Alan
+ */
+
+/************************************************************************************
+Stellaris Blink Tri-color LED / Start Stop Blinking with delays - Software Toggle
+Description; Toggle inside of a software loop to start/stop blink and control blink rate
+with clocks
+MCU Model Number: LM4F120H5QR
+-----------------
+Pin Assignments
+|PF1|-->Red LED
+|PF2|-->Blue LED
+|PF3|-->Green LED
+Name
+ECEN 403 Senior Design
+Texas A&M University
+Date: September 2014
+Built with Code Composer Studio v6.0
+Version 1
+Revision information listed below:
+V1: No revisions yet
+************************************************************************************/
+
+#include <inc/hw_types.h> //Defines common types and macros such as tBoolean and
+HWREG(x).
+#include <inc/hw_memmap.h> /*Macros defining the memory map of the Stellaris device. This
+includes
+defines such as peripheral base address locations such as GPIO_PORTF_BASE.*/
+#include <driverlib/sysctl.h> /*Defines and macros for System Control API of DriverLib. This
+includes
+API functions such as SysCtlClockSet and SysCtlClockGet.*/
+#include <driverlib/gpio.h> /*Defines and macros for GPIO API of DriverLib. This includes
+API functions such as GPIOPinTypePWM and GPIOPinWrite.*/
+int LED = 2; /*Creates an integer variable called LED and initializes it to 2.
+This will be used to cycle through the three LEDs, lighting them one at a time.*/
+
+

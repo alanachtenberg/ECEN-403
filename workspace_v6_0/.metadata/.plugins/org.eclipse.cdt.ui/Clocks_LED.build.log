@@ -1,0 +1,76 @@
+
+**** Build of configuration Debug for project Clocks_LED ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../lm4f121h5qr_startup_ccs.c'
+'Invoking: ARM Compiler'
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/bin/armcl -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.6/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F121H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f121h5qr_startup_ccs.pp"  "../lm4f121h5qr_startup_ccs.c"
+'Finished building: ../lm4f121h5qr_startup_ccs.c'
+' '
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/bin/armcl -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.6/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F121H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+'Finished building: ../main.c'
+' '
+'Building target: Clocks_LED.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.6/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F121H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Clocks_LED.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.6/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.6/include" -i"C:/StellarisWare" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Clocks_LED_linkInfo.xml" --rom_model -o "Clocks_LED.out"  "./lm4f121h5qr_startup_ccs.obj" "./main.obj" "../lm4f121h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Clocks_LED.out'
+' '
+c:/ti/ccsv6/utils/tiobj2bin/tiobj2bin
+Usage: tiobj2bin file.out file.bin [ofd] [hex] [mkhex]
+Clocks_LED.out
+Clocks_LED.bin
+process_begin: CreateProcess(C:\Users\Alan\workspace_v6_0\Clocks_LED\Debug\Clocks_LED.out, Clocks_LED.out, ...) failed.
+make (e=193): Error 193
+gmake[1]: [post-build] Error 193 (ignored)
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/bin/armofd
+process_begin: CreateProcess(NULL, Clocks_LED.bin, ...) failed.
+make (e=2): The system cannot find the file specified.
+
+gmake[1]: [post-build] Error 2 (ignored)
+TI ARM Object File Display              v5.1.6
+Tools Copyright (c) 1996-2014 Texas Instruments Incorporated
+
+Usage: armofd [-options] filename
+
+gmake[1]: [post-build] Error 1 (ignored)
+Use 'armofd -h <option>' for more information on a particular option.  Use
+'armofd -h <text>' to search options for information regarding <text>.
+
+Option arguments surrounded by [] declare they are optional.  Option arguments
+separated by commas specify that the option's argument must be chosen from
+those arguments listed.
+
+When shown, option arguments and defaults apply to the usage of both long and
+short option forms.
+
+Options:
+  --diag_wrap[=on,off]         Wrap diagnostic messages (argument optional,
+                                defaults to: on)
+  --dwarf,-g                   Append DWARF information to file information.
+  --dwarf_display=attribute    Display settings; use --dwarf_display=help for
+                                details
+  --dynamic_info               Output dynamic linking information
+  --emit_warnings_as_errors,-pdew
+fatal error: no input files provided
+                               Treat warnings as errors
+gmake[1]: [post-build] Error 1 (ignored)
+  --func_info                  Output function information.
+  --help,-h                    Display help
+  --obj_display=attribute      Display settings; use --obj_display=help for
+                                details
+  --output,-o=file             Output object file information to <file>.
+  --verbose,-v                 Prints verbose text output.
+  --xml,-x                     Output information in XML form.
+  --xml_indent=#               Number of spaces to indent nested XML tags
+
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/bin/armhex
+c:/ti/ccsv6/utils/tiobj2bin/mkhex4bin
+Reading from stdin ...
+File does not exist:  at XML_TI_OFD.pm line 877
+gmake[1]: [post-build] Error 255 (ignored)
+' '
+
+**** Build Finished ****

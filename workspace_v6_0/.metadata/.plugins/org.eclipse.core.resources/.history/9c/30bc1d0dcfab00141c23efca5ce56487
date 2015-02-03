@@ -1,0 +1,108 @@
+/*
+ * main.c
+ *
+ *  Created on: Feb 2, 2015
+ *      Author: Alan
+ */
+
+/************************************************************************************
+Stellaris Blink Tri-color LED / Start Stop Blinking with delays - Software Toggle
+Description; Toggle inside of a software loop to start/stop blink and control blink rate
+with clocks
+MCU Model Number: LM4F120H5QR
+-----------------
+Pin Assignments
+|PF1|-->Red LED
+|PF2|-->Blue LED
+|PF3|-->Green LED
+Name
+ECEN 403 Senior Design
+Texas A&M University
+Date: September 2014
+Built with Code Composer Studio v6.0
+Version 1
+Revision information listed below:
+V1: No revisions yet
+************************************************************************************/
+
+#include <inc/hw_types.h> //Defines common types and macros such as tBoolean andHWREG(x).
+#include <inc/hw_memmap.h> /*Macros defining the memory map of the Stellaris device. This includes
+defines such as peripheral base address locations such as GPIO_PORTF_BASE.*/
+#include <driverlib/sysctl.h> /*Defines and macros for System Control API of DriverLib. This
+includes API functions such as SysCtlClockSet and SysCtlClockGet.*/
+#include <driverlib/gpio.h> /*Defines and macros for GPIO API of DriverLib. This includes
+API functions such as GPIOPinTypePWM and GPIOPinWrite.*/
+int LED = 2; /*Creates an integer variable called LED and initializes it to 2.
+This will be used to cycle through the three LEDs, lighting them one at a time.*/
+
+int main(void){
+
+	SysCtlClockSet(SYSCTL_SYSDIV_4|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);//using main osc and pll, sysdiv is 4, and external cystal is 16 mhz
+	/* Configure the system clock to run using a 16MHz crystal on the main oscillator, driving
+	* the 400MHz PLL.
+	*
+	* From the sysctl.h header file the system clock is defined by the function
+	* extern void SysCtlClockSet(unsigned long ulConfig);
+	* The Run-Mode Clock Configuration (RCC) register configures system clock and oscillators.
+	* This is located on pages 244 - 247 in the Stellaris datasheet.
+	* SYSCTL_SYSDIV_4 has the hex value: 0x01C00000
+	* 0x01C00000 to binary is 1110000000000000000000000 which is 25 bits long
+	* What do bits 22 - 24 do?
+	* Bit 22 enables the system clock divider
+	* Bits 23 - 26 are for clock division
+	* See table 5-4 on page 214 of the Stellaris datasheet for possible system clock
+	* frequencies using the SYSDIV field
+	*
+	* SYSCTL_USE_PLL has the hex value: 0x00000000 //System clock is the PLL clock
+	* Bit 11 in the RCC register sets the system clock to be controlled by the PLL and
+	* clock divisions come from divisor entered in SYSDIV portion of the register.
+	* How do I disable and bypass the PLL?
+	* set bit 11 in the rcc register to 1
+	* SYSCTL_XTAL_16MHZ has the hex value: 0x00000540 //External crystal is 16 MHz
+	* 0x00000540 to binary is 10101000000 11 bits long
+	* Bits 6 - 10 set the external oscillator value
+	*
+	* SYSCTL_OSC_MAIN has the hex value 0x00000000 // Osc source is main osc
+	* Bits 4 - 5 selects the input source for the oscillator
+	* See page 247 of the Stellaris datasheet for more information
+	* What are the other oscillator sources available? PIOC, PIOC/4,LFIOC, 32 khz low power oscillator
+	* How do I disable the main oscillator?
+	*Set bit 0 of the RCC to 1
+	* The 400MHz PLL oscillates at only at 400MHz and can be driven
+	* by crystals or oscillators running between 5 and 25MHz. There is a default /2 divider in
+	* the clock path and specifying an additional divisor /4 totaling 2*4=8. This means the System
+	* Clock will be?
+	* 50 MHz
+	*
+	* How do I access the Run-Mode Clock Configuration 2 (RCC2) register?
+	* Through a seperate base address, rcc 1 is the 8th register, rcc 2 is the 10th register on the stellaris datasheet
+	* Writes to the rcc 2 register must be preceded by a write to the rcc 1 register
+	* */
+
+	/*Before calling any peripheral specific driverLib function, enable the clock
+	for that peripheral. If not enabled, it will result in a Fault ISR (address fault).
+	This is a common mistake for new Stellaris users.*/
+
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+	GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
+
+	while(1)
+	{
+	//Turn on the LED
+	GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, LED);//write LED to the pins, the middle argument specifies the bit mask
+	SysCtlDelay(2000000);
+	//Cycle through Red, Green and Blue LEDs
+	GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, 0x00);//turn leds off
+
+	if (LED == 8)
+		LED = 2;
+	else
+		LED = LED*2;
+	/*This statement reads "if LED equals eight then set LED equal to two otherwise
+	* take the current LED value, multiply it by two and redefine the value of LED based
+	* on the product. */
+	}
+}
+}
+
+
