@@ -1,0 +1,42 @@
+/*
+ * main.c
+ *
+ *  Created on: Feb 9, 2015
+ *      Author: Alan
+ */
+
+#include "inc/hw_memmp.h"
+#include "inc/hw_types.h"
+#include "driverlib/debug.h"
+#include "driverlib/sysctl.h" //sysctl calls for enabling peripherals
+#include "driverlib/adc.h"	  //definitions for the adc driver
+
+/*
+ * if a driver library API is called with incorrect parameters or a library function generates an
+ *  error for some other reason. The following code will be executed
+ */
+#ifdef DEBUG
+void__error__(char *pcFilename, unsigned long ulLine)
+{
+}
+#endif
+
+
+int main(void){
+
+	unsigned long ulADC0Value[4]; //array size matches fifo depth of ADC sequencer 1
+
+	volatile unsigned long ulTempAvg; //volatile keyword prevents compiler optimizations
+	volatile unsigned long ulTempValueC;// will allow us to see these variables during debug
+	volatile unsigned long ulTempValueF;
+
+	//sets clock to 40 Mhz
+	SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_OSC_MAIN|SYSCTL_XTAL_16MHZ);
+
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0); //enable the adc
+
+	SysCtlADCSpeedSet(SYSCTL_ADCSPEED_250KSPS); //set the sample freq to 250 khz
+
+
+
+}
