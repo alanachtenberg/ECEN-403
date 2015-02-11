@@ -63,9 +63,6 @@ int main(void){
 void SequenceIntHandler(void){
 			ADCIntClear(ADC0_BASE,1);//clear the interrupt
 
-			while(!ADCIntStatus(ADC0_BASE, 1, false))//busy wait for adc sequence to complete
-			{
-			}
 			ADCSequenceDataGet(ADC0_BASE, 1, ulADC0Value);//copies sequence data into our buffer
 
 			ulTempAvg = (ulADC0Value[0] + ulADC0Value[1] + ulADC0Value[2] + ulADC0Value[3]+2)/4;//get the average temp, 2 is for rounding

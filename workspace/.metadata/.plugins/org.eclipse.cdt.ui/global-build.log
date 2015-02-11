@@ -1,147 +1,210 @@
 
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 'Building file: ../lm4f120h5qr_startup_ccs.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f120h5qr_startup_ccs.pp"  "../lm4f120h5qr_startup_ccs.c"
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f120h5qr_startup_ccs.pp"  "../lm4f120h5qr_startup_ccs.c"
 'Finished building: ../lm4f120h5qr_startup_ccs.c'
 ' '
 'Building file: ../main.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"../main.c", line 84: warning #552-D: variable "ac_voltage" was set but never used
 'Finished building: ../main.c'
 ' '
-'Building target: Project_2.out'
-'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
-<Linking>
-'Finished building target: Project_2.out'
-' '
-
-**** Build Finished ****
-
-**** Build of configuration Debug for project Project_2 ****
-
-"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
-gmake: Nothing to be done for `all'.
-
-**** Build Finished ****
-
-**** Build of configuration Debug for project Project_2 ****
-
-"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
-'Building file: ../main.c'
+'Building file: C:/StellarisWare/driverlib/uart.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
-'Finished building: ../main.c'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uart.pp"  "C:/StellarisWare/driverlib/uart.c"
+'Finished building: C:/StellarisWare/driverlib/uart.c'
 ' '
-'Building target: Project_2.out'
-'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
-<Linking>
-'Finished building target: Project_2.out'
+'Building file: C:/StellarisWare/utils/uartstdio.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uartstdio.pp"  "C:/StellarisWare/utils/uartstdio.c"
+"C:/StellarisWare/utils/uartstdio.c", line 72: error #20: identifier "UART_TX_BUFFER_SIZE" is undefined
+"C:/StellarisWare/utils/uartstdio.c", line 82: error #20: identifier "UART_RX_BUFFER_SIZE" is undefined
+"C:/StellarisWare/utils/uartstdio.c", line 384: warning #225-D: function "UARTFlushRx" declared implicitly
+"C:/StellarisWare/utils/uartstdio.c", line 385: warning #225-D: function "UARTFlushTx" declared implicitly
+"C:/StellarisWare/utils/uartstdio.c", line 1438: warning #161-D: declaration is incompatible with previous "UARTFlushRx" (declared at line 384)
+"C:/StellarisWare/utils/uartstdio.c", line 1482: warning #161-D: declaration is incompatible with previous "UARTFlushTx" (declared at line 385)
+2 errors detected in the compilation of "C:/StellarisWare/utils/uartstdio.c".
+
+>> Compilation failure
+gmake: *** [uartstdio.obj] Error 1
+'Building file: C:/StellarisWare/utils/ustdlib.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="ustdlib.pp"  "C:/StellarisWare/utils/ustdlib.c"
+'Finished building: C:/StellarisWare/utils/ustdlib.c'
 ' '
+gmake: Target `all' not remade because of errors.
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_2 ****
-
-"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
-gmake: Nothing to be done for `all'.
-
-**** Build Finished ****
-
-**** Build of configuration Debug for project Project_2 ****
-
-"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
-gmake: Nothing to be done for `all'.
-
-**** Build Finished ****
-
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 'Building file: ../lm4f120h5qr_startup_ccs.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f120h5qr_startup_ccs.pp"  "../lm4f120h5qr_startup_ccs.c"
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f120h5qr_startup_ccs.pp"  "../lm4f120h5qr_startup_ccs.c"
 'Finished building: ../lm4f120h5qr_startup_ccs.c'
 ' '
 'Building file: ../main.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"../main.c", line 84: warning #552-D: variable "ac_voltage" was set but never used
 'Finished building: ../main.c'
 ' '
-'Building target: Project_2.out'
+'Building file: C:/StellarisWare/driverlib/uart.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uart.pp"  "C:/StellarisWare/driverlib/uart.c"
+'Finished building: C:/StellarisWare/driverlib/uart.c'
+' '
+'Building file: C:/StellarisWare/utils/uartstdio.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uartstdio.pp"  "C:/StellarisWare/utils/uartstdio.c"
+"C:/StellarisWare/utils/uartstdio.c", line 38: warning #48-D: incompatible redefinition of macro "UART_BUFFERED"
+'Finished building: C:/StellarisWare/utils/uartstdio.c'
+' '
+'Building file: C:/StellarisWare/utils/ustdlib.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="ustdlib.pp"  "C:/StellarisWare/utils/ustdlib.c"
+'Finished building: C:/StellarisWare/utils/ustdlib.c'
+' '
+'Building target: Project_3.out'
 'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_3.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_3_linkInfo.xml" --rom_model -o "Project_3.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "./uart.obj" "./uartstdio.obj" "./ustdlib.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\usblib\ccs-cm4f\Debug\usblib-cm4f.lib" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
 <Linking>
-'Finished building target: Project_2.out'
+'Finished building target: Project_3.out'
 ' '
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 gmake: Nothing to be done for `all'.
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 'Building file: ../main.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"../main.c", line 84: warning #552-D: variable "ac_voltage" was set but never used
 'Finished building: ../main.c'
 ' '
-'Building target: Project_2.out'
+'Building target: Project_3.out'
 'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_3.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_3_linkInfo.xml" --rom_model -o "Project_3.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "./uart.obj" "./uartstdio.obj" "./ustdlib.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\usblib\ccs-cm4f\Debug\usblib-cm4f.lib" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
 <Linking>
-'Finished building target: Project_2.out'
+'Finished building target: Project_3.out'
 ' '
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 gmake: Nothing to be done for `all'.
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
-'Building file: ../main.c'
+'Building file: C:/StellarisWare/utils/uartstdio.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
-'Finished building: ../main.c'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uartstdio.pp"  "C:/StellarisWare/utils/uartstdio.c"
+'Finished building: C:/StellarisWare/utils/uartstdio.c'
 ' '
-'Building target: Project_2.out'
+'Building target: Project_3.out'
 'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_3.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_3_linkInfo.xml" --rom_model -o "Project_3.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "./uart.obj" "./uartstdio.obj" "./ustdlib.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\usblib\ccs-cm4f\Debug\usblib-cm4f.lib" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
 <Linking>
-'Finished building target: Project_2.out'
+'Finished building target: Project_3.out'
 ' '
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_2 ****
+**** Build of configuration Debug for project Project_3 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 'Building file: ../main.c'
 'Invoking: ARM Compiler'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"../main.c", line 84: warning #552-D: variable "ac_voltage" was set but never used
 'Finished building: ../main.c'
 ' '
-'Building target: Project_2.out'
+'Building target: Project_3.out'
 'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_3.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_3_linkInfo.xml" --rom_model -o "Project_3.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "./uart.obj" "./uartstdio.obj" "./ustdlib.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\usblib\ccs-cm4f\Debug\usblib-cm4f.lib" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
 <Linking>
-'Finished building target: Project_2.out'
+'Finished building target: Project_3.out'
 ' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_3 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../lm4f120h5qr_startup_ccs.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f120h5qr_startup_ccs.pp"  "../lm4f120h5qr_startup_ccs.c"
+'Finished building: ../lm4f120h5qr_startup_ccs.c'
+' '
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"../main.c", line 84: warning #552-D: variable "ac_voltage" was set but never used
+'Finished building: ../main.c'
+' '
+'Building file: C:/StellarisWare/driverlib/uart.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uart.pp"  "C:/StellarisWare/driverlib/uart.c"
+'Finished building: C:/StellarisWare/driverlib/uart.c'
+' '
+'Building file: C:/StellarisWare/utils/uartstdio.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="uartstdio.pp"  "C:/StellarisWare/utils/uartstdio.c"
+'Finished building: C:/StellarisWare/utils/uartstdio.c'
+' '
+'Building file: C:/StellarisWare/utils/ustdlib.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="ustdlib.pp"  "C:/StellarisWare/utils/ustdlib.c"
+'Finished building: C:/StellarisWare/utils/ustdlib.c'
+' '
+'Building target: Project_3.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_3.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_3_linkInfo.xml" --rom_model -o "Project_3.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "./uart.obj" "./uartstdio.obj" "./ustdlib.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\usblib\ccs-cm4f\Debug\usblib-cm4f.lib" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Project_3.out'
+' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_3 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare/boards/ek-lm4f120xl" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+"../main.c", line 84: warning #552-D: variable "ac_voltage" was set but never used
+'Finished building: ../main.c'
+' '
+'Building target: Project_3.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=TARGET_IS_BLIZZARD_RA2 --define=UART_BUFFERED --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_3.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_3_linkInfo.xml" --rom_model -o "Project_3.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "./uart.obj" "./uartstdio.obj" "./ustdlib.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\usblib\ccs-cm4f\Debug\usblib-cm4f.lib" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Project_3.out'
+' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_3 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+gmake: Nothing to be done for `all'.
 
 **** Build Finished ****
