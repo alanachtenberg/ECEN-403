@@ -1,16 +1,5 @@
 
-**** Clean-only build of configuration Debug for project Project_1 ****
-
-"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k clean 
-DEL /F  "Project_1.out"  "Project_1.hex" 
-DEL /F "lm4f120h5qr_startup_ccs.pp" "main.pp" 
-DEL /F "lm4f120h5qr_startup_ccs.obj" "main.obj" 
-'Finished clean'
-' '
-
-**** Build Finished ****
-
-**** Build of configuration Debug for project Project_1 ****
+**** Build of configuration Debug for project Project_2 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 'Building file: ../lm4f120h5qr_startup_ccs.c'
@@ -23,16 +12,23 @@ DEL /F "lm4f120h5qr_startup_ccs.obj" "main.obj"
 "c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
 'Finished building: ../main.c'
 ' '
-'Building target: Project_1.out'
+'Building target: Project_2.out'
 'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_1.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_1_linkInfo.xml" --rom_model -o "Project_1.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
 <Linking>
-'Finished building target: Project_1.out'
+'Finished building target: Project_2.out'
 ' '
 
 **** Build Finished ****
 
-**** Build of configuration Debug for project Project_1 ****
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+gmake: Nothing to be done for `all'.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
 
 "c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
 'Building file: ../main.c'
@@ -40,11 +36,112 @@ DEL /F "lm4f120h5qr_startup_ccs.obj" "main.obj"
 "c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
 'Finished building: ../main.c'
 ' '
-'Building target: Project_1.out'
+'Building target: Project_2.out'
 'Invoking: ARM Linker'
-"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_1.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_1_linkInfo.xml" --rom_model -o "Project_1.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
 <Linking>
-'Finished building target: Project_1.out'
+'Finished building target: Project_2.out'
+' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+gmake: Nothing to be done for `all'.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+gmake: Nothing to be done for `all'.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../lm4f120h5qr_startup_ccs.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="lm4f120h5qr_startup_ccs.pp"  "../lm4f120h5qr_startup_ccs.c"
+'Finished building: ../lm4f120h5qr_startup_ccs.c'
+' '
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+'Finished building: ../main.c'
+' '
+'Building target: Project_2.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Project_2.out'
+' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+gmake: Nothing to be done for `all'.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+'Finished building: ../main.c'
+' '
+'Building target: Project_2.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Project_2.out'
+' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+gmake: Nothing to be done for `all'.
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+'Finished building: ../main.c'
+' '
+'Building target: Project_2.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Project_2.out'
+' '
+
+**** Build Finished ****
+
+**** Build of configuration Debug for project Project_2 ****
+
+"c:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: ../main.c'
+'Invoking: ARM Compiler'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me --include_path="c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --include_path="C:/StellarisWare" -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off --preproc_with_compile --preproc_dependency="main.pp"  "../main.c"
+'Finished building: ../main.c'
+' '
+'Building target: Project_2.out'
+'Invoking: ARM Linker'
+"c:/ti/ccsv6/tools/compiler/arm_5.1.10/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 --abi=eabi -me -g --gcc --define="ccs" --define=PART_LM4F120H5QR --display_error_number --diag_warning=225 --diag_wrap=off -z -m"Project_2.map" --heap_size=0 --stack_size=512 -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/lib" -i"c:/ti/ccsv6/tools/compiler/arm_5.1.10/include" --reread_libs --warn_sections --display_error_number --diag_wrap=off --xml_link_info="Project_2_linkInfo.xml" --rom_model -o "Project_2.out"  "./lm4f120h5qr_startup_ccs.obj" "./main.obj" "../lm4f120h5qr.cmd" -l"libc.a" -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" 
+<Linking>
+'Finished building target: Project_2.out'
 ' '
 
 **** Build Finished ****

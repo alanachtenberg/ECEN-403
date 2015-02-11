@@ -54,22 +54,19 @@ int main(void){
 
 	while(1){
 		ADCIntClear(ADC0_BASE,1);//clear the interrupt
-		ADCProcessorTrigger(ADC0_BASE, 1);//triggers the adc conversion with software
-		while(!ADCIntStatus(ADC0_BASE, 1, false))//busy wait for adc sequence to complete
-		{
-		}
-		ADCSequenceDataGet(ADC0_BASE, 1, ulADC0Value);//copies sequence data into our buffer
+					ADCProcessorTrigger(ADC0_BASE, 1);//triggers the adc conversion with software
+					while(!ADCIntStatus(ADC0_BASE, 1, false))//busy wait for adc sequence to complete
+					{
+					}
+					ADCSequenceDataGet(ADC0_BASE, 1, ulADC0Value);//copies sequence data into our buffer
 
-		ulTempAvg = (ulADC0Value[0] + ulADC0Value[1] + ulADC0Value[2] + ulADC0Value[3]+2)/4;//get the average temp, 2 is for rounding
-		//integers always round down, simply adding .5 will make it round correctly
+					ulTempAvg = (ulADC0Value[0] + ulADC0Value[1] + ulADC0Value[2] + ulADC0Value[3]+2)/4;//get the average temp, 2 is for rounding
+					//integers always round down, simply adding .5 will make it round correctly
 
-		ulTempValueC = (1475 - ((2475 * ulTempAvg)) / 4096)/10;//value of temp in celsius
-		//conversion in datasheet from section 13.3.6
+					ulTempValueC = (1475 - ((2475 * ulTempAvg)) / 4096)/10;//value of temp in celsius
+					//conversion in datasheet from section 13.3.6
 
-		ulTempValueF = ((ulTempValueC * 9) + 160) / 5;//simple conversion from C to F
-
+					ulTempValueF = ((ulTempValueC * 9) + 160) / 5;//simple conversion from C to F
 	}
-
-
-
 }
+
