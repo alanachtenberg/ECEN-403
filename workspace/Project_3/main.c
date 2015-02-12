@@ -56,11 +56,11 @@ int main(void){
 	GPIOPinTypeADC(ADC_PORT,ADC_PIN);//sets
 	SysCtlADCSpeedSet(SYSCTL_ADCSPEED_250KSPS); //set the sample freq to 250 khz
 	//sequence sample period is 1/250Khz, total sampling period is 4/250khz
-	ADCSequenceDisable(ADC0_BASE, 1);//disables adc sequencer 1, we will configure it and renable it later
+	ADCSequenceDisable(ADC0_BASE, 1);//disables adc sequencer 1, we will configure it and re-enable it later
 
 	ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_PROCESSOR, 0); //configures the adc to use sequencer 1, be triggered by the processor, and have the highest priority 0
 	//ch 11 is pb5
-	ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH11);//configures the sequence 0 to read the tempature
+	ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH11);//configures the sequence 0 to read the temperature
 	ADCSequenceStepConfigure(ADC0_BASE, 1, 1, ADC_CTL_CH11);//repeat for sequence 1
 	ADCSequenceStepConfigure(ADC0_BASE, 1, 2, ADC_CTL_CH11);//repeat for sequence 2
 	ADCSequenceStepConfigure(ADC0_BASE, 1, 3, ADC_CTL_CH11 | ADC_CTL_IE | ADC_CTL_END);//configures the final step to notify the processor it has completed its sequence vie interrupt

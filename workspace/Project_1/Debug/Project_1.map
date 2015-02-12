@@ -1,7 +1,7 @@
 ******************************************************************************
-                  TI ARM Linker PC v5.1.10                     
+                  TI ARM Linker PC v5.1.6                      
 ******************************************************************************
->> Linked Tue Feb 10 16:57:55 2015
+>> Linked Wed Feb 11 17:31:59 2015
 
 OUTPUT FILE NAME:   <Project_1.out>
 ENTRY POINT SYMBOL: "_c_int00"  address: 000006e1
@@ -34,11 +34,11 @@ SECTION ALLOCATION MAP
  output                                  attributes/
 section   page    origin      length       input sections
 --------  ----  ----------  ----------   ----------------
-.init_array 
-*          0    00000000    00000000     UNINITIALIZED
-
 .intvecs   0    00000000    0000026c     
                   00000000    0000026c     lm4f120h5qr_startup_ccs.obj (.intvecs)
+
+.init_array 
+*          0    00000000    00000000     UNINITIALIZED
 
 .text      0    0000026c    0000066c     
                   0000026c    0000013c     driverlib-cm4f.lib : sysctl.obj (.text:SysCtlClockSet)
@@ -132,7 +132,7 @@ UNDEFED    SHT$$INIT_ARRAY$$Limit
 000008a9   __TI_decompress_none
 000008d3   __TI_decompress_rle24
 2000020c   __TI_dtors_ptr
-00000918   __TI_static_base__
+00000000   __TI_static_base__
 0000048d   __aeabi_memcpy
 0000048d   __aeabi_memcpy4
 0000048d   __aeabi_memcpy8
@@ -161,6 +161,7 @@ GLOBAL SYMBOLS: SORTED BY Symbol Address
 
 address    name
 --------   ----
+00000000   __TI_static_base__
 00000000   g_pfnVectors
 00000001   __TI_args_main
 00000200   __STACK_SIZE
@@ -195,7 +196,6 @@ address    name
 000008c3   ADCIntClear
 000008cd   SysCtlDelay
 000008d3   __TI_decompress_rle24
-00000918   __TI_static_base__
 00000928   __TI_Handler_Table_Base
 00000930   __TI_CINIT_Base
 00000930   __TI_Handler_Table_Limit

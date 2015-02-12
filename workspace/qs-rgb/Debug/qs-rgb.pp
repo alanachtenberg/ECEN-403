@@ -1,12 +1,12 @@
 # FIXED
 
 qs-rgb.obj: ../qs-rgb.c
-qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/math.h
-qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/ymath.h
-qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/yvals.h
-qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/stdarg.h
-qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/linkage.h
-qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/_lock.h
+qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/math.h
+qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/ymath.h
+qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/yvals.h
+qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/stdarg.h
+qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/linkage.h
+qs-rgb.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/_lock.h
 qs-rgb.obj: C:/StellarisWare/inc/hw_types.h
 qs-rgb.obj: C:/StellarisWare/inc/hw_memmap.h
 qs-rgb.obj: C:/StellarisWare/inc/hw_hibernate.h
@@ -26,12 +26,12 @@ qs-rgb.obj: ../rgb_commands.h
 qs-rgb.obj: ../qs-rgb.h
 
 ../qs-rgb.c: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/math.h: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/ymath.h: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/yvals.h: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/stdarg.h: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/linkage.h: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/_lock.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/math.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/ymath.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/yvals.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/stdarg.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/linkage.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/_lock.h: 
 C:/StellarisWare/inc/hw_types.h: 
 C:/StellarisWare/inc/hw_memmap.h: 
 C:/StellarisWare/inc/hw_hibernate.h: 

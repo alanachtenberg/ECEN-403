@@ -13,7 +13,7 @@ main.obj: C:/StellarisWare/driverlib/pin_map.h
 main.obj: C:/StellarisWare/driverlib/uart.h
 main.obj: C:/StellarisWare/inc/hw_gpio.h
 main.obj: C:/StellarisWare/utils/ustdlib.h
-main.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/stdarg.h
+main.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/stdarg.h
 main.obj: C:/StellarisWare/utils/uartstdio.h
 main.obj: C:/StellarisWare/utils/cmdline.h
 
@@ -30,6 +30,6 @@ C:/StellarisWare/driverlib/pin_map.h:
 C:/StellarisWare/driverlib/uart.h: 
 C:/StellarisWare/inc/hw_gpio.h: 
 C:/StellarisWare/utils/ustdlib.h: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/stdarg.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/stdarg.h: 
 C:/StellarisWare/utils/uartstdio.h: 
 C:/StellarisWare/utils/cmdline.h: 

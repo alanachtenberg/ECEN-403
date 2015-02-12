@@ -1,7 +1,7 @@
 # FIXED
 
 lm4f120h5qr_startup_ccs.obj: ../lm4f120h5qr_startup_ccs.c
-lm4f120h5qr_startup_ccs.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/stdint.h
+lm4f120h5qr_startup_ccs.obj: c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/stdint.h
 
 ../lm4f120h5qr_startup_ccs.c: 
-c:/ti/ccsv6/tools/compiler/arm_5.1.10/include/stdint.h: 
+c:/ti/ccsv6/tools/compiler/arm_5.1.6/include/stdint.h: 
