@@ -92,9 +92,7 @@ void SequenceIntHandler(void){
 			//ac_voltage_avg = (ac_voltage[0]+ac_voltage[1]+ac_voltage[2]+ac_voltage[3])/4;
 
 			dutyCycle = (ulADC0Value)/(ADC_resolution);
-			ulPeriod = (SysCtlClockGet() / 500)/2; // 40 MHz ---> 40 kHz
-			match_val = (1-(dutyCycle*ulPeriod)); // set match value
-
+			ulPeriod = (SysCtlClockGet())*(dutyCycle); // determines pulse width
 			/*if (ac_voltage_avg >= (0.75*(ulPeriod-1))) {
 				dutyCycle = (0.75*(ulPeriod-1));
 			}
@@ -109,7 +107,7 @@ void SequenceIntHandler(void){
 			// Timer 0 Load set
 			TimerLoadSet(TIMER0_BASE, TIMER_B, ulPeriod -1);
 			// Timer 0 Match set
-			TimerMatchSet(TIMER0_BASE, TIMER_A, match_val);
+			TimerMatchSet(TIMER0_BASE, TIMER_A, dutyCycle);
 			// Timers are now configured.
 			// Finally, enable the timers, which will now run (API functions will set TnENbit in Reg 4 (GPTMCTL)
 			TimerEnable(TIMER0_BASE, TIMER_BOTH);
