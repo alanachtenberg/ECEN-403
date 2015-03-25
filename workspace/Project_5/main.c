@@ -30,6 +30,7 @@ start value (corresponding to period) defined by GPTMTnILR and GPTMTnPR register
 #define ADC_PIN GPIO_PIN_5
 #define SYSTEM_VOLTAGE_MV 3300//millivolts
 #define ADC_RESOLUTION 4096
+#define SEQUENCE 0
 #ifdef DEBUG
 void__error__(char *pcFilename, unsigned long ulLine)
 {
@@ -49,17 +50,14 @@ int main(void){
 	GPIOPinTypeADC(ADC_PORT,ADC_PIN); //sets
 	SysCtlADCSpeedSet(SYSCTL_ADCSPEED_250KSPS); //set the sample freq to 250 khz
 	//sequence sample period is 1/250Khz, total sampling period is 4/250khz
-	ADCSequenceDisable(ADC0_BASE, 1);//disables adc sequencer 1, we will configure it and re-enable it later
-	ADCSequenceConfigure(ADC0_BASE, 1, ADC_TRIGGER_PROCESSOR, 0); //configures the adc to use sequencer 1, be triggered by the processor, and have the highest priority 0
+	ADCSequenceDisable(ADC0_BASE, SEQUENCE);//disables adc sequencer 1, we will configure it and re-enable it later
+	ADCSequenceConfigure(ADC0_BASE, SEQUENCE, ADC_TRIGGER_PROCESSOR, 0); //configures the adc to use sequencer 1, be triggered by the processor, and have the highest priority 0
 	//ch 11 is pb5
-	ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH11);//configures the sequence 0 to read the temperature
-	ADCSequenceStepConfigure(ADC0_BASE, 1, 1, ADC_CTL_CH11);//repeat for sequence 1
-	ADCSequenceStepConfigure(ADC0_BASE, 1, 2, ADC_CTL_CH11);//repeat for sequence 2
-	ADCSequenceStepConfigure(ADC0_BASE, 1, 3, ADC_CTL_CH11 | ADC_CTL_IE | ADC_CTL_END);//configures the final step to notify the processor it has completed its sequence vie interrupt
-	//adc_ctl_end notifies the adc that the sequence has been completed
-	ADCSequenceEnable(ADC0_BASE, 1);//configuration done, time to reenable the sequencer
-	ADCIntEnable(ADC0_BASE,1);//enables interrupt for the adc0 on sequencer 1
-	IntEnable(INT_ADC0SS1);
+	ADCSequenceStepConfigure(ADC0_BASE, SEQUENCE, 0, ADC_CTL_CH11| ADC_CTL_IE | ADC_CTL_END);//configures the sequence 0 to read the temperature
+		//adc_ctl_end notifies the adc that the sequence has been completed
+	ADCSequenceEnable(ADC0_BASE, SEQUENCE);//configuration done, time to reenable the sequencer
+	ADCIntEnable(ADC0_BASE,SEQUENCE);//enables interrupt for the adc0 on sequencer 0
+	IntEnable(INT_ADC0SS0);
 	IntMasterEnable();
 	// Configure pin PB6 as Timer_0 CCP0
 	GPIOPinConfigure(GPIO_PB6_T0CCP0); // Configure pin PB6 as Timer 0_A output
@@ -70,26 +68,33 @@ int main(void){
 	TimerControlLevel(TIMER0_BASE, TIMER_BOTH, 0); // Timer 0 is trigger low
 
 	while(1){
-		ADCProcessorTrigger(ADC0_BASE, 1);//triggers the adc conversion with software
+		ADCProcessorTrigger(ADC0_BASE, SEQUENCE);//triggers the adc conversion with software
 	}
 
 }
 
 //handler is declared in nvic, n startup_css.c
 void SequenceIntHandler(void){
-			ADCIntClear(ADC0_BASE,1);//clear the interrupt
-			ADCSequenceDataGet(ADC0_BASE, 1, ulADC0Value);//copies sequence data into our buffer
-			unsigned long ac_voltage[4];
+			ADCIntClear(ADC0_BASE,SEQUENCE);//clear the interrupt
+			ADCSequenceDataGet(ADC0_BASE, SEQUENCE, ulADC0Value);//copies sequence data into our buffer
+			//unsigned long ac_voltage[4];
 			unsigned long ulPeriod; // sets the period, and thus frequency, of our PWM
-			unsigned long dutyCycle;
-			unsigned long ac_voltage_avg;
-			int i=0;
-			for (i=0;i<4;++i){
+			float dutyCycle;
+			unsigned long match_val;
+			//unsigned long ac_voltage_avg;
+			//float max_voltage = 3.3;
+			//int i=0;
+
+			/*for (i=0;i<4;++i){
 				ac_voltage[i]=(ulADC0Value[i]*SYSTEM_VOLTAGE_MV)/ADC_RESOLUTION;//voltage in millivolts
 			}
 			ac_voltage_avg = (ac_voltage[0]+ac_voltage[1]+ac_voltage[2]+ac_voltage[3])/4;
-			ulPeriod = (SysCtlClockGet() / 500)/2; // 40 MHz ---> 40 kHz
-			if (ac_voltage_avg >= (0.75*(ulPeriod-1))) {
+			*/
+			dutyCycle = ((float)(ulADC0Value[0])/((float)ADC_RESOLUTION));//cast to float prevents integer concatenation
+			ulPeriod = (SysCtlClockGet() / 250000);
+			match_val = (1.0-dutyCycle)*ulPeriod; // set match value
+
+			/*if (ac_voltage_avg >= (0.75*(ulPeriod-1))) {
 				dutyCycle = (0.75*(ulPeriod-1));
 			}
 			else if (ac_voltage_avg <= 0.25*(ulPeriod-1)) {
@@ -97,12 +102,13 @@ void SequenceIntHandler(void){
 			}
 			else {
 				dutyCycle = ac_voltage_avg;
-			}
+			}*/
+
 			// These API functions load the match value into Timer n Match register(GPTMTnMATCHR)
 			// Timer 0 Load set
-			TimerLoadSet(TIMER0_BASE, TIMER_B, ulPeriod -1);
+			TimerLoadSet(TIMER0_BASE, TIMER_A, ulPeriod -1);
 			// Timer 0 Match set
-			TimerMatchSet(TIMER0_BASE, TIMER_A, dutyCycle);
+			TimerMatchSet(TIMER0_BASE, TIMER_A, match_val);
 			// Timers are now configured.
 			// Finally, enable the timers, which will now run (API functions will set TnENbit in Reg 4 (GPTMCTL)
 			TimerEnable(TIMER0_BASE, TIMER_BOTH);
