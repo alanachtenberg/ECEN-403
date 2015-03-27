@@ -5,7 +5,8 @@ import java.awt.*;
  * Created by Alan on 3/24/2015.
  */
 public class MainFrame extends JFrame{
-    private static Console console;
+    public static final Console CONSOLE= new Console("CONSOLE");//our GUI console for printing information to the user.
+    private Server server;
     private JButton dummy;
     MainFrame(){
         super();
@@ -17,21 +18,19 @@ public class MainFrame extends JFrame{
 
 
     public void initialize(){
-        //init console
-        console= new Console("CONSOLE");
 
         //TODO implement inteface
         dummy= new JButton("dummy");
-        //Create LayoutS
-        this.setLayout(new GridLayout(0,2));
 
-        this.add(console);
+        //Layout controls
+        this.setLayout(new GridLayout(0,3));
+
+        //ADD Console
+        this.add(CONSOLE);
         //ADD Content
         this.add(dummy);
-
-        for(int i=0;i<100;++i){
-            console.writeln(Integer.toString(i));
-        }
-        console.writeln("testing scroll text output");
+        this.add(new JButton("dummy 2"));
+        server= new Server(1234);
+        new Thread(server).start();//start server on seperate thread
     }
 }

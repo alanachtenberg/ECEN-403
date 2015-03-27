@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Created by Alan on 3/24/2015.
@@ -9,6 +11,7 @@ import java.awt.event.ActionListener;
 public class Console  extends JPanel{
     private JLabel label;//name of console
     private JScrollPane scrollPane;//contains output textarea
+    private JPopupMenu menu;
     private JTextArea output;//system output
     private JTextField input;//for user input
 
@@ -21,6 +24,8 @@ public class Console  extends JPanel{
         label.setBackground(Color.WHITE);//white to match background of text areas
 
         initScrollPanel();//inits output textfield and adds to scroll pane
+
+        initMenu();//inits popup menu for console
 
         initInput();//inits input textField
 
@@ -49,10 +54,12 @@ public class Console  extends JPanel{
         c.weighty=0;
         this.add(input,c);
     }
+
     private void initScrollPanel(){
         //init text area
         output= new JTextArea();//for whatever reason adding initial text prevents auto-scrolling, so no initial text :'(
         output.setLineWrap(true);
+        output.setAlignmentY(JTextArea.BOTTOM_ALIGNMENT);
         output.setEditable(false);//sets text field as read only, only displays output
         output.setAutoscrolls(true);
 
@@ -61,7 +68,56 @@ public class Console  extends JPanel{
         scrollPane.setVerticalScrollBarPolicy ( ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS );//always displays scroll bar
         scrollPane.setAutoscrolls(true);//sets pane to autoscroll to new content
     }
+    private void initMenu(){
+        //create menu
+        menu= new JPopupMenu();
 
+        //create clear button item
+        JMenuItem menuItem = new JMenuItem("Clear");
+        menuItem.addActionListener(new ActionListener() {//listens for item click
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clear();//clear the console
+            }
+        });
+        //add clear item
+        menu.add(menuItem);
+
+        //add menu to scroll pane
+        output.add(menu);
+
+        output.addMouseListener(new MouseListener() {//listen for clicks on text area
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (e.isPopupTrigger())
+                    menu.show(e.getComponent(), e.getX(), e.getY());
+            }
+        });
+    }
     private void initInput(){
         input= new JTextField("Input");
         input.addActionListener(new ActionListener() {
@@ -80,17 +136,25 @@ public class Console  extends JPanel{
         output.setFont(new Font("Serif",Font.PLAIN,12));
         output.setForeground(Color.GRAY);
     }
+    //helper function for setting up layout
     private void setGridPos(GridBagConstraints c,int x, int y, int w, int h){
         c.gridx=x;
         c.gridy=y;
         c.gridwidth=w;
         c.gridheight=h;
     }
-
+    //Basic Interaction with the console
+    //addCommand allows an actionlistener to be added to the input, to be defined elsewhere
     public void writeln(String s){
         output.append(s + "\n");
     }
     public void write(String s){
         output.append(s);
+    }
+    public void clear(){
+        output.setText("");
+    }
+    public void addCommand(ActionListener al){
+        input.addActionListener(al);
     }
 }
