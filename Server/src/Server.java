@@ -17,7 +17,7 @@ import java.util.Map;
 public class Server implements Runnable{
     private ServerSocket serverSocket;//listening port connections
     private HashMap<String,Socket> clients;//hashmap of client connections, key is username value is clients socket
-    private ArrayList<String> connectedUsers;
+    public static ArrayList<String> connectedUsers;
     private String user;//current user
 
     private Inet4Address localHost;
@@ -51,8 +51,10 @@ public class Server implements Runnable{
             });
             while(true) {
                 Socket clientSocket = serverSocket.accept();
-                if (authenticate(clientSocket) != true)
-                    clientSocket.close();//authentication failed
+                if (authenticate(clientSocket) == false) {
+                    if (clientSocket != null && !clientSocket.isClosed())
+                        clientSocket.close();//authentication failed
+                }
                 else {
                     connectedUsers.add(user);//we have a legit user
                     clients.put(user, clientSocket);//store socket connection to be closed later
@@ -79,23 +81,23 @@ public class Server implements Runnable{
 
     }
 
-    private Boolean authenticate(Socket client) {
+    private Boolean authenticate(final Socket client) {
         try {
             InputStreamReader streamReader=new InputStreamReader(client.getInputStream());//clear input stream
             BufferedReader in = new BufferedReader(streamReader);
             PrintWriter out = new PrintWriter(client.getOutputStream(), true);
             //out.flush();//initial flush of output
             out.println("Hello I am your server input password to continue");
-            //client.setSoTimeout(10);//give the user ten seconds to respond
+            String temp;
             for (int i =0;i<3;++i) {//give them 3 chances to input the password correctly
-                if (in.readLine().equals(pass)) {
+                if ( (temp=in.readLine()).equals(pass)) {
                     out.println("Connection Established");
                     out.println("Input UserName");
                     user=in.readLine();
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {//let the user know a new client connected
-                            console.writeln("Client Connected address: " + clients.get(user).getInetAddress() + " user: " + user);
+                            console.writeln("Client Connected address: " + client.getInetAddress() + " user: " + user);
                         }
                     });
                     return true;
@@ -111,5 +113,17 @@ public class Server implements Runnable{
         return null;
     }
 
+    public void closeConnection(String userName){
+        Socket sock=clients.get(userName);
+        if (sock!=null&&sock.isClosed()==false){
+            try {
+                sock.close();//close the connection
+                clients.remove(userName);//remove client from map
+                connectedUsers.remove(userName);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
+    }
 }
