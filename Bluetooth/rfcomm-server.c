@@ -20,10 +20,10 @@ int main(int argc, char **argv)
     loc_addr.rc_bdaddr = *BDADDR_ANY;
     loc_addr.rc_channel = (uint8_t) 1;
     bind(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
-
+    printf("socket bound");
     // put socket into listening mode
     listen(s, 1);
-
+    printf("socket is listening");
     // accept one connection
     client = accept(s, (struct sockaddr *)&rem_addr, &opt);
 
