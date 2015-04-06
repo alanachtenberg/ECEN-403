@@ -1,5 +1,6 @@
 package alan.cardiac;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -15,6 +16,7 @@ public class HomeFragment extends Fragment {
     private Button connectButton;
     private BluetoothAdapter mBluetoothAdapter;
     private static final int REQUEST_ENABLE_BT=1;
+
     public static HomeFragment newInstance() {
         HomeFragment fragment = new HomeFragment();
         Bundle args = new Bundle();
@@ -64,7 +66,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode==REQUEST_ENABLE_BT){
-            if (mBluetoothAdapter.isEnabled())
+            if (resultCode== Activity.RESULT_OK)
                 StartBluetoothService();
         }
         else
