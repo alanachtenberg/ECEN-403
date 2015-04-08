@@ -1,0 +1,8 @@
+*.name
+*.gradle
+*.jar
+AndroidApp/gradlew
+*.properties
+AndroidApp/app/proguard-rules.pro
+*.iml
+*.bat
