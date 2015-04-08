@@ -12,19 +12,19 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.Set;
 
 public class BluetoothComm extends Service {
-    public static Boolean isRunning=false;//init to false
     private SharedPreferences mSP;
     private BluetoothAdapter mBluetoothAdapter;
   //private BroadCastReciever mReciever defined later
     private Set<BluetoothDevice> pairedDevices;
     private String targetDeviceName="default";
     private Boolean targetDevicePaired=false;
-    private Boolean targetDeviceConnected=false;
     private BluetoothDevice targetDevice;
     private BtCommThread btCommThread;
+    private Boolean isStarted=false;//allow only one connection at a time
     public BluetoothComm() {
     }
 
@@ -48,31 +48,37 @@ public class BluetoothComm extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isRunning=true;
-        Toast.makeText(this, "BluetoothComm Service Started", Toast.LENGTH_SHORT).show();
-        retrievePreferences();//gets target device name
-        targetDevicePaired=checkForTargetDevice();
-        if (!targetDevicePaired){
-            discoverDevice();//initiate discovery
-        }
-        else if (btCommThread==null || !btCommThread.isAlive()){
-            btCommThread=new BtCommThread(targetDevice);
-            btCommThread.start();//
-        }
-        else{
-            Toast.makeText(this,"Bluetooth Device Already Connected",Toast.LENGTH_LONG).show();
-        }
+        if (!isStarted) {
+            isStarted=true;
+            Toast.makeText(this, "BluetoothComm Service Started", Toast.LENGTH_SHORT).show();
+            retrievePreferences();//gets target device name
+            targetDevicePaired = checkForTargetDevice();
+            if (!targetDevicePaired) {
+                discoverDevice();//initiate discovery
+            } else if (btCommThread == null || !btCommThread.isAlive()) {
+                try {
+                    btCommThread = new BtCommThread(targetDevice, getApplicationContext());
+                    btCommThread.start();//
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    btCommThread = null;//must have been a problem with Thread constructor, so get rid of instance
+                    Toast.makeText(this, "Connection Failed", Toast.LENGTH_LONG).show();
+                    stopSelf();//stop the bluetooth service, let user have a chance to update settings
+                }
+            } else {
+                Toast.makeText(this, "Bluetooth Device Already Connected", Toast.LENGTH_LONG).show();
+            }
         /*START_NOT_STICKY Tells os to not recreate service if it is stopped in the event to free memmory.
         * In other words, we will let the user trigger starting a new service in the event
         * that it is stopped
          */
-        return START_NOT_STICKY;
+        }
+            return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
         try {
-            isRunning=false;
             unregisterReceiver(mReceiver);
 
             //dispose of connection thread
@@ -81,8 +87,7 @@ public class BluetoothComm extends Service {
                 btCommThread.close();//closes socket connection to device, must be done to cancel any blocking reads that might prevent interruption
                 btCommThread.join();//wait for thread to complete execution
             }
-
-            Toast.makeText(this, "Bluetooth Comm Service Destroyed", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Bluetooth Comm Service Destroyed", Toast.LENGTH_SHORT).show();
         }
         catch (InterruptedException e) {
                 e.printStackTrace();
@@ -133,8 +138,16 @@ public class BluetoothComm extends Service {
                 if (intent.getParcelableExtra(BluetoothDevice.EXTRA_BOND_STATE).equals(BluetoothDevice.BOND_BONDED)
                         && intent.getParcelableExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE).equals(BluetoothDevice.BOND_BONDING)) {
                     if (btCommThread == null || btCommThread.isAlive() == false) {
-                        btCommThread = new BtCommThread(targetDevice);
-                        btCommThread.start();//start connection thread
+                        try {
+                            btCommThread = new BtCommThread(targetDevice, context.getApplicationContext());
+                            btCommThread.start();//start connection thread
+                        }
+                        catch(IOException e){
+                            e.printStackTrace();
+                            btCommThread=null;//must have been a problem with Thread constructor, so get rid of instance
+                            Toast.makeText(context,"Connection Failed",Toast.LENGTH_LONG).show();
+                            stopSelf();//stop the bluetooth service, let user have a chance to update settings
+                        }
                     }
                 }
             }

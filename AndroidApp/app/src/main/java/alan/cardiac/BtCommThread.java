@@ -4,12 +4,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.util.Log;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.UUID;
 
 /**
@@ -25,37 +26,31 @@ public class BtCommThread extends Thread {
     private BluetoothSocket socket;
 
     private StringBuffer inBuffer;//buffer for recieved messages from server
-    private InputStreamReader input;
-    private OutputStreamWriter output;
+    private BufferedReader input;
+    private PrintWriter output;
 
     /*
     *@param c pass in context for making toasts to user
     */
-    BtCommThread(BluetoothDevice btDevice, Context c){
+    BtCommThread(BluetoothDevice btDevice, Context c) throws IOException{//let caller handle Exception with constructor
         context=c;
         device=btDevice;
-        try {
-            mBlueToothAdapter=BluetoothAdapter.getDefaultAdapter();
-            socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
-
-            socket.connect();//attempt connection
-            input=new InputStreamReader(socket.getInputStream());//get input
-            output = new OutputStreamWriter(socket.getOutputStream());//get output
-
-        } catch (IOException e) {
-            if (!socket.isConnected()) {
-                Toast.makeText(context, "Bluetooth Comm Service Created", Toast.LENGTH_LONG).show();
-            }
-            e.printStackTrace();
-        }
+        mBlueToothAdapter=BluetoothAdapter.getDefaultAdapter();
+        socket = device.createInsecureRfcommSocketToServiceRecord(uuid);
+        socket.connect();//attempt connection
+        input= new BufferedReader(new InputStreamReader(socket.getInputStream()));//get input
+        output = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));//get output
     }
+
     @Override
     public void run(){
         try {
+
                 String message="";
-                input.read(message);
-                out.write("Hello\n");
-                out.flush();//flush tells the socket to send the data immediately, rather than wait for local buffer to fill
+                message=input.readLine();
+                Toast.makeText(context,message,Toast.LENGTH_SHORT);
+                output.write("Hello\n");
+                output.flush();//flush tells the socket to send the data immediately, rather than wait for local buffer to fill
         }
          catch (IOException e) {
             e.printStackTrace();
@@ -64,17 +59,16 @@ public class BtCommThread extends Thread {
     }
 
     public void write(String s){
-        try {
             output.write(s);
             output.flush();
-        }
-        catch(IOException e){
-            Log.d(TAG,"Write Failed\n");
-            e.printStackTrace();
-        }
     }
     public String read(){
-
+        try {
+            return input.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     /*
     *Closes Socket connection, must be called when thread is being disposed
