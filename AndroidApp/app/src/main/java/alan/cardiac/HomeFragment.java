@@ -13,7 +13,8 @@ import android.widget.Button;
 
 public class HomeFragment extends Fragment {
     private View view;
-    private Button connectButton;
+    private Button connectBlueToothButton;
+    private Button connectServerButton;
     private BluetoothAdapter mBluetoothAdapter;
     private static final int REQUEST_ENABLE_BT=1;
 
@@ -37,13 +38,16 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         view=inflater.inflate(R.layout.fragment_home, container, false);
 
-        connectButton = (Button) view.findViewById(R.id.connect_button);
-        connectButton.setOnClickListener(connectButtonListener);
+        connectBlueToothButton = (Button) view.findViewById(R.id.connect_bluetooth_button);
+        connectBlueToothButton.setOnClickListener(connectBlueToothListener);
+
+        connectServerButton = (Button) view.findViewById(R.id.connect_server_button);
+        connectServerButton.setOnClickListener(connectServerListener);
 
         return view;
     }
 
-    private View.OnClickListener connectButtonListener= new View.OnClickListener() {
+    private View.OnClickListener connectBlueToothListener= new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -59,9 +63,19 @@ public class HomeFragment extends Fragment {
             }
         }
     };
+    private View.OnClickListener connectServerListener= new View.OnClickListener(){
+        @Override
+        public void onClick(View v){
+            StartTcpService();
+        }
+    };
 
     public void StartBluetoothService(){
-        getActivity().startService(new Intent(getActivity(),BluetoothComm.class));
+        getActivity().startService(new Intent(getActivity(),BluetoothService.class));
+    }
+
+    public void StartTcpService(){
+        getActivity().startService(new Intent(getActivity(),TcpService.class));
     }
 
     @Override

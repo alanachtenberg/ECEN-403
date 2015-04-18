@@ -4,7 +4,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
-import android.widget.Toast;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,11 +45,10 @@ public class BtCommThread extends Thread {
     @Override
     public void run(){
         try {
-
                 String message="";
                 message=input.readLine();
-                Toast.makeText(context,message,Toast.LENGTH_SHORT);
-                output.write("Hello\n");
+                Log.i(TAG,message);//show console
+                output.write("Hello I am your android master");//say hello to server
                 output.flush();//flush tells the socket to send the data immediately, rather than wait for local buffer to fill
         }
          catch (IOException e) {

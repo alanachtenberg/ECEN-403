@@ -14,11 +14,18 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_logo"/>
         <Button
-            android:id="@+id/connect_button"
+            android:id="@+id/connect_bluetooth_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Connect"
+            android:text="Connect Bluetooth"
             />
+        <Button
+            android:id="@+id/connect_server_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Connect Server"
+            />
+
 
     </LinearLayout>
 

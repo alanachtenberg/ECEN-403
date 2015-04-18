@@ -63,11 +63,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private void setSummaryPreference(Preference preference){
         if (preference instanceof EditTextPreference) {
             EditTextPreference editPreference = (EditTextPreference) preference;
-            if (editPreference.getKey().endsWith("pass"))
-                editPreference.setSummary(editPreference.getText().replaceAll(".","*"));
-            else
-                editPreference.setSummary(editPreference.getText());
+            if (editPreference.getText() != null) {
+                if (editPreference.getKey().endsWith("pass"))
+                    editPreference.setSummary(editPreference.getText().replaceAll(".", "*"));
+                else
+                    editPreference.setSummary(editPreference.getText());
 
+            }
         }
     }
 }

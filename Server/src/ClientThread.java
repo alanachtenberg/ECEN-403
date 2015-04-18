@@ -37,8 +37,6 @@ public class ClientThread implements Runnable{
                 }
                 else{
                     if (socket.getInputStream().read(new byte[1])==-1){//attempt to read from input stream, returns -1 if fails
-                        //TODO add closing
-                        //synchronized ()
                         socket.close();//close socket
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
