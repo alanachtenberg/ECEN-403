@@ -22,6 +22,12 @@
             android:defaultValue="1234"
             />
         <EditTextPreference
+            android:key="user_name"
+            android:title="User Name"
+            android:inputType="textShortMessage"
+            />
+
+        <EditTextPreference
             android:key="server_pass"
             android:title="Server Password"
             android:inputType="textPassword"
