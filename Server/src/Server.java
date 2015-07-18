@@ -91,8 +91,8 @@ public class Server implements Runnable{
             String temp;
             for (int i =0;i<3;++i) {//give them 3 chances to input the password correctly
                 if ( (temp=in.readLine()).equals(pass)) {
-                    out.println("Connection Established");
-                    out.println("Input UserName");
+                    out.println("Connection Established, Input UserName");
+                    out.flush();
                     user=in.readLine();
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
@@ -106,22 +106,25 @@ public class Server implements Runnable{
                     out.println("Incorrect Password");
             }
             return false;
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println(e.getMessage());
+            closeConnection(user);
             e.printStackTrace();
         }
         return null;
     }
 
     public void closeConnection(String userName){
-        Socket sock=clients.get(userName);
-        if (sock!=null&&sock.isClosed()==false){
-            try {
-                sock.close();//close the connection
-                clients.remove(userName);//remove client from map
-                connectedUsers.remove(userName);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (user!=null) {//if username is null do nothing
+            Socket sock = clients.get(userName);
+            if (sock != null && sock.isClosed() == false) {
+                try {
+                    sock.close();//close the connection
+                    clients.remove(userName);//remove client from map
+                    connectedUsers.remove(userName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
