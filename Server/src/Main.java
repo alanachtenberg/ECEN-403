@@ -11,7 +11,7 @@ public class Main {
             public void run() {
                 //TODO move main method into its own class
                 MainFrame mainWindow= new MainFrame("CARdiac");
-                mainWindow.setMinimumSize(new Dimension(SCREEN_SIZE.width * 2 / 3, SCREEN_SIZE.height * 2 / 3));
+                mainWindow.setSize(new Dimension(SCREEN_SIZE.width * 3 / 4, SCREEN_SIZE.height * 2 / 3));
                 mainWindow.initialize();//must call initialize after setting size, to size elements of window properly
                 mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);//exit program when main window closess
                 mainWindow.setVisible(true);
