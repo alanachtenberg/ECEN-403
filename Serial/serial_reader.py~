@@ -25,7 +25,7 @@ def main():
 	ser1, = unloadQuadData(buf, QuadSharedMem['ser1'])
 	ser2, = unloadQuadData(buf, QuadSharedMem['ser2'])
 	ser3, = unloadQuadData(buf, QuadSharedMem['ser3'])
-	ser4, = unloadQuadData(buf, QuadSharedMem['ser4'])
+	ser4 = unloadQuadData(buf, QuadSharedMem['ser4'])
  
         if i != roll:
             print 'i: %s => %f' % (i, roll)
