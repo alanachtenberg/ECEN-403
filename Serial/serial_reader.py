@@ -22,9 +22,11 @@ def main():
         #new_s, = struct.unpack('f', buf[4:8])
   
         roll, = unloadQuadData(buf, QuadSharedMem['Roll'])
+	ser = unloadQuadData(buf, QuadSharedMem['ser'])
  
         if i != roll:
             print 'i: %s => %f' % (i, roll)
+	    print 'ser: %s' % (ser)
             print 'Press Ctrl-C to exit'
             i = roll
   

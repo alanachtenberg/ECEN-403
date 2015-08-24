@@ -23,5 +23,10 @@ QuadSharedMem = {
             'Type' : 'f',
             'Offset' : 16,
             'Size' : 4
-            }
+            },
+	'ser' : {
+	    'Type' : 'f',
+            'Offset' : 20,
+            'Size' : 4
+	    }
         }

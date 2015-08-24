@@ -17,6 +17,7 @@ class QuadHighLevelGateway:
         self.yaw    = 0.0 # float
         self.Kp     = 0.0 # float
         self.Kd     = 0.0 # float
+	self.ser = 0.0 # serial port data
         self.offset = 0
  
     def initialize(self, buf):
@@ -30,6 +31,8 @@ class QuadHighLevelGateway:
         self.offset += struct.calcsize(self.Kp._type_)
         self.Kd = ctypes.c_float.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.Kd._type_)
+	self.ser = ctypes.c_float.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.ser._type_)
   
 def main():
     # Create new empty file to back memory map on disk
@@ -45,8 +48,7 @@ def main():
     # prot: PROT_WRITE means this process can write to this mmap
     buf = mmap.mmap(fd, mmap.PAGESIZE)
   
-    a = ser.readline()
-    print(a)
+    sData = ser.readline()
     
     quadGate = QuadHighLevelGateway()
     quadGate.initialize(buf)
@@ -62,8 +64,8 @@ def main():
     quadGate.roll.value = 5.2
   
     new_i = raw_input('Enter a new value for i: ')
-    sData = ser.readline()
-    quadGate.roll.value = float(sData)
+    quadGate.roll.value = float(new_i)
+    quadGate.ser.value = float(sData)
   
   
 if __name__ == '__main__':
