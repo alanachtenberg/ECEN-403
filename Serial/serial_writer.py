@@ -3,6 +3,12 @@ import ctypes
 import mmap
 import os
 import struct
+
+import serial
+import time
+
+ser = serial.Serial('/dev/ttyACM0', '115200') # create serial object
+ser.flushOutput()
   
 class QuadHighLevelGateway:
     def __init__(self):
@@ -39,6 +45,9 @@ def main():
     # prot: PROT_WRITE means this process can write to this mmap
     buf = mmap.mmap(fd, mmap.PAGESIZE)
   
+    a = ser.readline()
+    print(a)
+    
     quadGate = QuadHighLevelGateway()
     quadGate.initialize(buf)
   
@@ -53,7 +62,8 @@ def main():
     quadGate.roll.value = 5.2
   
     new_i = raw_input('Enter a new value for i: ')
-    quadGate.roll.value = float(new_i)
+    sData = ser.readline()
+    quadGate.roll.value = float(sData)
   
   
 if __name__ == '__main__':
