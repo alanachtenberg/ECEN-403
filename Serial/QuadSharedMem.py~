@@ -4,27 +4,27 @@ QuadSharedMem = {
             'Offset' : 0,
             'Size' : 4
             },
-        'ser1' : {
+        'Pitch' : {
             'Type' : 'f',
             'Offset' : 4,
             'Size' : 4
             },
-        'ser2' : {
+        'Yaw' : {
             'Type' : 'f',
             'Offset' : 8,
             'Size' : 4
             },
-        'ser3' : {
+        'Kp' : {
             'Type' : 'f',
             'Offset' : 12,
             'Size' : 4
             },
-        'ser4' : {
+        'Kd' : {
             'Type' : 'f',
             'Offset' : 16,
             'Size' : 4
             },
-	'ser5' : {
+	'ser' : {
 	    'Type' : 'f',
             'Offset' : 20,
             'Size' : 4

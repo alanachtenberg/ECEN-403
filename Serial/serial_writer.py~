@@ -67,10 +67,10 @@ def main():
   
     new_i = raw_input('Enter a new value for i: ')
     quadGate.roll.value = float(new_i)
-    quadGate.ser1.value = float(sData1)
-    quadGate.ser2.value = float(sData2)
-    quadGate.ser3.value = float(sData3)
-    quadGate.ser4.value = float(sData4)
+    quadGate.ser.value = float(sData1)
+    quadGate.ser.value = float(sData2)
+    quadGate.ser.value = float(sData3)
+    quadGate.ser.value = float(sData4)
 
   
   
