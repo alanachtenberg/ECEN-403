@@ -2,9 +2,9 @@ import mmap
 import os
 import struct
 import time
-from QuadSharedMem import QuadSharedMem
+from UdooSharedMem import UdooSharedMem
   
-def unloadQuadData(buf, mem):
+def unloadSerialData(buf, mem):
     return struct.unpack(mem["Type"], buf[mem["Offset"]:mem["Offset"]+mem["Size"]])
  
 def main():
@@ -15,29 +15,29 @@ def main():
     buf = mmap.mmap(fd, mmap.PAGESIZE)
   
     i = None
-    s = None
+    ##s = None
   
     while 1:
         #new_i, = struct.unpack('f', buf[:4])
         #new_s, = struct.unpack('f', buf[4:8])
   
-        roll, = unloadQuadData(buf, QuadSharedMem['Roll'])
-	ser1, = unloadQuadData(buf, QuadSharedMem['ser1'])
-	ser2, = unloadQuadData(buf, QuadSharedMem['ser2'])
-	ser3, = unloadQuadData(buf, QuadSharedMem['ser3'])
-	ser4, = unloadQuadData(buf, QuadSharedMem['ser4'])
+        ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
+	ser1, = unloadSerialData(buf, UdooSharedMem['ser1'])
+	ser2, = unloadSerialData(buf, UdooSharedMem['ser2'])
+	ser3, = unloadSerialData(buf, UdooSharedMem['ser3'])
+	ser4, = unloadSerialData(buf, UdooSharedMem['ser4'])
  
-        if i != roll:
-            print 'i: %s => %f' % (i, roll)
+        if i != ser0:
+            print 'i: %s => %f' % (i, ser0)
 	    print 'ser1: %s' % (ser1)
 	    print 'ser2: %s' % (ser2)
 	    print 'ser3: %s' % (ser3)
 	    print 'ser4: %s' % (ser4)
             print 'Press Ctrl-C to exit'
-            i = roll
+            i = ser0
   
-        time.sleep(1)
-  
+        time.sleep(1) 
+  ## Delete fd when done
   
 if __name__ == '__main__':
     main()

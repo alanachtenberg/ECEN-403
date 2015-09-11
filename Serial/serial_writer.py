@@ -10,9 +10,9 @@ import time
 ser = serial.Serial('/dev/ttyACM0', '115200') # create serial object
 ser.flushOutput()
   
-class QuadHighLevelGateway:
+class UdooHighLevelGateway:
     def __init__(self):
-        self.roll   = 0.0 # float
+        self.ser0   = 0.0 # float
         self.ser1   = 0.0 # float
         self.ser2   = 0.0 # float
         self.ser3   = 0.0 # float
@@ -21,8 +21,8 @@ class QuadHighLevelGateway:
         self.offset = 0
  
     def initialize(self, buf):
-        self.roll = ctypes.c_float.from_buffer(buf)
-        self.offset = struct.calcsize(self.roll._type_)
+        self.ser0 = ctypes.c_float.from_buffer(buf)
+        self.offset = struct.calcsize(self.ser0._type_)
         self.ser1 = ctypes.c_float.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.ser1._type_)
         self.ser2 = ctypes.c_float.from_buffer(buf, self.offset)
@@ -48,25 +48,22 @@ def main():
     # prot: PROT_WRITE means this process can write to this mmap
     buf = mmap.mmap(fd, mmap.PAGESIZE)
   
-    sData1 = ser.readline()
-    sData2 = ser.readline()
-    sData3 = ser.readline()
-    sData4 = ser.readline()
-    quadGate = QuadHighLevelGateway()
-    quadGate.initialize(buf)
+    UdooGate = UdooHighLevelGateway()
+    UdooGate.initialize(buf)
   
     print 'First 20 bytes of memory mapping: %r' % buf[:20]
     raw_input('Now run b.py and press ENTER')
   
-    print
     print 'Changing i'
-    quadGate.roll.value = 0.1
-  
-    print 'Changing s'
-    quadGate.roll.value = 5.2
-  
+    quadGate.ser0.value = 0.1
+
+    sData1 = ser.readline()
+    sData2 = ser.readline()
+    sData3 = ser.readline()
+    sData4 = ser.readline()
+
     new_i = raw_input('Enter a new value for i: ')
-    quadGate.roll.value = float(new_i)
+    quadGate.ser0.value = float(new_i)
     quadGate.ser1.value = float(sData1)
     quadGate.ser2.value = float(sData2)
     quadGate.ser3.value = float(sData3)
