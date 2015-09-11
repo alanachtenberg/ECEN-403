@@ -1,4 +1,4 @@
-Udooit SharedMem = {
+UdooSharedMem = {
         'ser0' : {
             'Type' : 'f',
             'Offset' : 0,

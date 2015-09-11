@@ -55,19 +55,21 @@ def main():
     raw_input('Now run b.py and press ENTER')
   
     print 'Changing i'
-    quadGate.ser0.value = 0.1
+    UdooGate.ser0.value = 0.1
+    while 1:
+    	new_i = raw_input('Enter a new value for i: ')
+    	UdooGate.ser0.value = float(new_i)    
 
-    sData1 = ser.readline()
-    sData2 = ser.readline()
-    sData3 = ser.readline()
-    sData4 = ser.readline()
+    	sData1 = ser.readline() # change to non-blocking?
+    	sData2 = ser.readline()
+    	sData3 = ser.readline()
+    	sData4 = ser.readline()
 
-    new_i = raw_input('Enter a new value for i: ')
-    quadGate.ser0.value = float(new_i)
-    quadGate.ser1.value = float(sData1)
-    quadGate.ser2.value = float(sData2)
-    quadGate.ser3.value = float(sData3)
-    quadGate.ser4.value = float(sData4)
+    
+	UdooGate.ser1.value = float(sData1)
+    	UdooGate.ser2.value = float(sData2)
+    	UdooGate.ser3.value = float(sData3)
+    	UdooGate.ser4.value = float(sData4)
 
   
   
