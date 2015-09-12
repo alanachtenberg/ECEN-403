@@ -17,7 +17,7 @@ class UdooHighLevelGateway:
         self.ser2   = 0.0 # float
         self.ser3   = 0.0 # float
         self.ser4   = 0.0 # float
-	self.ser5   = 0.0 # serial port data
+        self.ser5   = 0.0 # serial port data
         self.offset = 0
  
     def initialize(self, buf):
@@ -31,7 +31,7 @@ class UdooHighLevelGateway:
         self.offset += struct.calcsize(self.ser3._type_)
         self.ser4 = ctypes.c_float.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.ser4._type_)
-	self.ser5 = ctypes.c_float.from_buffer(buf, self.offset)
+        self.ser5 = ctypes.c_float.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.ser5._type_)
   
 def main():
@@ -51,27 +51,24 @@ def main():
     UdooGate = UdooHighLevelGateway()
     UdooGate.initialize(buf)
   
-    print 'First 20 bytes of memory mapping: %r' % buf[:20]
-    raw_input('Now run b.py and press ENTER')
-  
-    print 'Changing i'
-    UdooGate.ser0.value = 0.1
     while 1:
-    	new_i = raw_input('Enter a new value for i: ')
-    	UdooGate.ser0.value = float(new_i)    
+        sData0 = ser.readline()
+        sData1 = ser.readline()
+        sData2 = ser.readline()
+        sData3 = ser.readline()
+        #sData4 = ser.readline()
 
-    	sData1 = ser.readline() # change to non-blocking?
-    	sData2 = ser.readline()
-    	sData3 = ser.readline()
-    	sData4 = ser.readline()
+        try:
+            UdooGate.ser0.value = float(sData0)
+            UdooGate.ser1.value = float(sData1)
+            UdooGate.ser2.value = float(sData2)
+            UdooGate.ser3.value = float(sData3)
+            #UdooGate.ser4.value = float(sData4)
 
-    
-	UdooGate.ser1.value = float(sData1)
-    	UdooGate.ser2.value = float(sData2)
-    	UdooGate.ser3.value = float(sData3)
-    	UdooGate.ser4.value = float(sData4)
+        except ValueError:
+            pass
 
-  
+
   
 if __name__ == '__main__':
     main()
