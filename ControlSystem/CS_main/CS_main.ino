@@ -15,24 +15,37 @@
 #define    RegisterMeasure     0x00          // Register to write to initiate ranging.
 #define    MeasureValue        0x04          // Value to initiate ranging.
 #define    RegisterHighLowB    0x8f          // Register to get both High and Low bytes in 1 call.
-
-int reading = 0;
+#define    BUFF_SIZE 7 //size of buffer for time and distance measurements
+#define    circum 131.94//cm
+#define    rxn_time 4.8//seconds
+#define    decel_max 223.5//cm/s^2 (assumption)
+long reading = 0;
 volatile unsigned int quarter_revolutions;
 float rps;
-unsigned long timeold;
-float time_buff[5];
-unsigned int lidar_distance[5];
-int i=0;
-unsigned int relVel = 0;
- 
+float v1 =0;
+unsigned long timeold;//in milliseconds
+float current_time=0; //in milliseconds
+float time_buff[7];//in sedconds
+volatile float lidar_distance[7];//cmeters
+unsigned int   values_read=0;//current amount of values read from lidar
+unsigned int   old_values_read=0;//amount of values read since main loop last executed
+float rel_vel = 0;// cm/s
+float dummy_vel = 0;
+float t_stop = 0;//s
+float v_stop_avg = 0;
+float d_stop = 0;
+float t_collision = 0;
+
+
+
 void setup()
 {
   Wire.begin(); // join i2c bus
-  Serial.begin(9600); // start serial communication at 9600bps
+  Serial.begin(115200); // start serial communication at 9600bps
   pinMode(12, INPUT);
   pinMode(13, INPUT);
-  attachInterrupt(12, magnet_detect, RISING);//Initialize the intterrupt pin (Arduino digital pin 2)
-  attachInterrupt(13, magnet_detect2, FALLING);
+  attachInterrupt(12, magnet_detect, RISING);//Initialize the north pole detection intterrupt(o/p high) pin (Arduino digital pin 12)
+  attachInterrupt(13, magnet_detect2, FALLING);//south pole detection interrupt(o/p low)
   quarter_revolutions = 0;
   rps = 0;
   timeold = 0;
@@ -44,7 +57,7 @@ void setup()
 
   /* we want wavesel 01 with RC */
   TC_Configure(/* clock */TC2,/* channel */1, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4); 
-  TC_SetRC(TC2, 1, 131200);
+  TC_SetRC(TC2, 1, 65600);//run every .1 seconds. 131200 for 5*/sec
   TC_Start(TC2, 1);
 
   // enable timer interrupts on the timer
@@ -57,76 +70,143 @@ void setup()
   
 }
 
-void loop()
-{
-   if (quarter_revolutions >=4) { 
-     rps = quarter_revolutions*250/(float)((millis() - timeold));
-     timeold = millis();
-     quarter_revolutions = 0;
-     Serial.println(rps);
-   }
-}
+  void loop()
+  {
+    //queue initially filled with zeroes; wait on queue to be filled before calculation
+    if (values_read > BUFF_SIZE && values_read!=old_values_read)
+    {
+      dummy_vel=0;
+      rel_vel=0;//init to 0 every time so that it does not continually increase
+      for (int i=0;i<BUFF_SIZE;++i)
+      {
+        float delta_d=(lidar_distance[i+1]-lidar_distance[i]);
+        float delta_t=(time_buff[i+1]-time_buff[i]);
+        float delta_v=(delta_d/delta_t);
+        rel_vel+=delta_v;
+        //dummy_vel+=delta_v;//for collision function
+      }
+    
+      rel_vel=rel_vel/(BUFF_SIZE-1);//minus 1, we lose a value from the difference of distance and time
+      //dummy_vel = dummy_vel/(BUFF_SIZE-1);
+      //t_collision = lidar_distance[BUFF_SIZE-1]/dummy_vel;
+      
+      
+      Serial.print("Relative Velocity(cm/s) : ");
+      Serial.println(rel_vel);
+      Serial.print("\n");
+      //Serial.print("dummyV(cm/s) : ");
+      //Serial.println(dummy_vel);
+      //Serial.print("\n");
+    
+       //Serial.print("colTime: ");
+      //Serial.println(t_collision);
+      old_values_read=values_read;
+      
+      //Serial.print("dist: ");
+      //Serial.println(reading);
+     
+      if (quarter_revolutions >=4) 
+      { //calculate revolution per second using 4 magnets
+        rps = quarter_revolutions*250/(float)((millis() - timeold));
+        v1 = rps*circum;//vehicle speed
+        timeold = millis();
+        quarter_revolutions = 0;
+        v_stop_avg = v1/2;
+        t_stop = (-v1)/(-decel_max);//time to stop based on estimated max decel
+        d_stop = v_stop_avg*t_stop;//distance to stop
+        //collision ();//Call function to detect if collision may occur
+        Serial.print("Velocity(cm/s): ");
+        Serial.println(v1);
+        Serial.print("\n");
+        Serial.print("stopping distance: ");
+        Serial.println(d_stop);
+        Serial.print("\n");
+      }
+      
+  
+    }
+    
+  }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // INTERRUPT HANDLERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void TC7_Handler()
-{
-  // We need to get the status to clear it and allow the interrupt to fire again
-  TC_GetStatus(TC2, 1);
-  //Serial.println("Interrupt Ack");
-    // do nothing timer interrupts will handle the blinking;
-  Wire.beginTransmission((int)LIDARLite_ADDRESS); // transmit to LIDAR-Lite
-  Wire.write((int)RegisterMeasure); // sets register pointer to  (0x00)  
-  Wire.write((int)MeasureValue); // sets register pointer to  (0x00)  
-  Wire.endTransmission(); // stop transmitting
-
-  delayMicroseconds(20000); // Wait 20ms for transmit
-
-  Wire.beginTransmission((int)LIDARLite_ADDRESS); // transmit to LIDAR-Lite
-  Wire.write((int)RegisterHighLowB); // sets register pointer to (0x8f)
-  Wire.endTransmission(); // stop transmitting
-  time_buff[i] = 1000*millis();
-  //delay(10); // Wait 20ms for transmit
-
-  Wire.requestFrom((int)LIDARLite_ADDRESS, 2); // request 2 bytes from LIDAR-Lite
-
-  if(2 <= Wire.available()) // if two bytes were received
+  void TC7_Handler()
   {
+    // We need to get the status to clear it and allow the interrupt to fire again
+    TC_GetStatus(TC2, 1);
+    Wire.beginTransmission((int)LIDARLite_ADDRESS); // transmit to LIDAR-Lite
+    Wire.write((int)RegisterMeasure); // sets register pointer to  (0x00)  
+    Wire.write((int)MeasureValue); // sets register pointer to  (0x00)  
+    Wire.endTransmission(); // stop transmitting
+  
+    delayMicroseconds(20000); // Wait 20ms for transmit
+  
+    Wire.beginTransmission((int)LIDARLite_ADDRESS); // transmit to LIDAR-Lite
+    Wire.write((int)RegisterHighLowB); // sets register pointer to (0x8f)
+    Wire.endTransmission(); // stop transmitting
+  
+    //delay(10); // Wait 10ms for transmit
+  
+    Wire.requestFrom((int)LIDARLite_ADDRESS, 2); // request 2 bytes from LIDAR-Lite
+    while (Wire.available()<2){//waits for two bytes to be available
+      //delay(2);//wait two milliseconds
+    }   
     reading = Wire.read(); // receive high byte (overwrites previous reading)
     reading = reading << 8; // shift high byte to be high 8 bits
     reading |= Wire.read(); // receive low byte as lower 8 bits
-    Serial.println(reading); // print the reading
-    lidar_distance[i] = reading;
-  }
-   
-  i++;
-  
-  if (i = 5)
-  {
-   relVel = 1/5*((lidar_distance[0]/time_buff[0])+(lidar_distance[1]/time_buff[1])+(lidar_distance[2]/time_buff[2])+(lidar_distance[3]/time_buff[3])+(lidar_distance[4]/time_buff[4]));
-   i=0;
-   Serial.print('Relative Velocity: ');
-   Serial.println(relVel);
-  }
- 
+    current_time = millis();
+    
+    if(reading < 3500 && reading > 7){//set max (35 meters) and min (.05 meters) distance values to disregard distance errors
+      //reset rel_vel calculation if unrealistic change in distance occurs
+      if((lidar_distance[BUFF_SIZE-1]-reading) > 100 || (lidar_distance[BUFF_SIZE-1]-reading) < -100){
+        values_read = 0;
+      }
+      for (int i=0;i<BUFF_SIZE-1;++i){//shift all values in queues left
+        time_buff[i]=time_buff[i+1];
+        lidar_distance[i]=lidar_distance[i+1];
+      }  
+      //assign new values to end of queue
+      time_buff[BUFF_SIZE-1] = (float)current_time/1000;
+      lidar_distance[BUFF_SIZE-1] = (float)reading;
+    
+      Serial.print("Distance(cm): ");
+      Serial.println(reading); // print distance
+      
+      ++values_read;//increment values read
+    }    // We need to get the status to clear it and allow the interrupt to fire again
+ }
 
-}
-
- void magnet_detect()//This function is called whenever a magnet/interrupt is detected by the arduino
+ void magnet_detect()//This function is called whenever a north pole magnet/interrupt is detected by the hall sensor
  {
    quarter_revolutions++;
    //Serial.println("detect");
    //Serial.println(rps);
  }
- void magnet_detect2()
+ void magnet_detect2()//called when south pole detected by hall sensor. hall o/p set to low
  {
    quarter_revolutions++;
    //Serial.println("detect2");
    //Serial.println(rps);
  }
 
-
+   /*void collision(){
+   t_collision = lidar_distance[BUFF_SIZE-1]/dummy_vel;
+   if(t_stop < (t_collision+10)){
+     int j = 0;//do nothing
+   }
+   else if(t_stop < (t_collision+5)) {
+     Serial.print("t_stop: ");
+     Serial.println(t_stop);
+     Serial.print("t_collide: ");
+     Serial.println(t_collision);
+     Serial.println("BREAK!!! ");
+     Serial.print(" ");
+   }
+   }*/
+     
+     
+   
 
 
 
