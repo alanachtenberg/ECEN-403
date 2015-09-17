@@ -8,7 +8,7 @@ void loop()
 {
   float hdr = 5;
   float msg = 7;
-  float spd = 8.5;
+  float spd = 8.15;
   float ftr = 19.3;
     
 
