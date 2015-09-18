@@ -8,18 +8,18 @@ volatile int isr_count = 0 ;   // this was for debugging
 
 void setup()
 {
-  Serial.begin (57600) ; // for debugging
+  Serial.begin (115200) ; // for debugging
   adc_setup () ;         // setup ADC
   setup_pio_TIOA0 () ;  // drive Arduino pin 2 at 48kHz to bring clock out
   // Start timer. Parameters are:
 
-  // TC1 : timer counter. Can be TC0, TC1 or TC2
+  // TC0 : timer counter. Can be TC0, TC1 or TC2
   // 0   : channel. Can be 0, 1 or 2
-  // TC3_IRQn: irq number. See table.
-  // 40  : frequency (in Hz)
-  // The interrupt service routine is TC3_Handler. See table.
+  // TC0_IRQn: irq number. See table.
+  // 1  : frequency (in Hz)
+  // The interrupt service routine is TC0_Handler. See table.
 
-  startTimer(TC1, 0, TC3_IRQn, 40);
+  startTimer(TC0, 0, TC0_IRQn, 1);
 
   // Paramters table:
   // TC0, 0, TC0_IRQn  =>  TC0_Handler()
@@ -76,12 +76,14 @@ void setup_pio_TIOA0 ()  // Configure Ard pin 2 as output from TC0 channel A (co
 
 /* Interrupt Handlers */
 
-// This function is called every 1/40 sec.
-void TC3_Handler()
+// This function is called every 1 sec.
+void TC0_Handler()
 {
   // You must do TC_GetStatus to "accept" interrupt
-  // As parameters use the first two parameters used in startTimer (TC1, 0 in this case)
-  TC_GetStatus(TC1, 0);
+  // As parameters use the first two parameters used in startTimer (TC0, 0 in this case)
+  TC_GetStatus(TC0, 0);
+  Serial.print("time(ms): "):
+  Serial.print(millis());
 
 }
 
@@ -95,6 +97,8 @@ void ADC_Handler (void)
   if (ADC->ADC_ISR & ADC_ISR_EOC7)   // ensure there was an End-of-Conversion and we read the ISR reg
   {
     int val = *(ADC->ADC_CDR+7) ;    // get conversion result
+    Serial.print("ADC Value: ");
+    Serial.println(val);
     samples [sptr] = val ;           // stick in circular buffer
     sptr = (sptr+1) & BUFMASK ;      // move pointer
   }
