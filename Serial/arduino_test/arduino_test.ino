@@ -6,10 +6,10 @@ void setup()
 
 void loop()
 {
-  float hdr = 5;
-  float msg = 7;
-  float spd = 8.15;
-  float ftr = 19.3;
+  float hdr = 10;
+  float msg = 13;
+  float spd = 17;
+  float ftr = 20;
     
 
   Serial.println(hdr);
