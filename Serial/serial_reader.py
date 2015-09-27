@@ -2,11 +2,20 @@ import mmap
 import os
 import struct
 import time
+import json
 from UdooSharedMem import UdooSharedMem
   
 def unloadSerialData(buf, mem):
     return struct.unpack(mem["Type"], buf[mem["Offset"]:mem["Offset"]+mem["Size"]])
  
+def filldict(buf):
+	ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
+    ser1, = unloadSerialData(buf, UdooSharedMem['ser1'])
+    ser2, = unloadSerialData(buf, UdooSharedMem['ser2'])
+    ser3, = unloadSerialData(buf, UdooSharedMem['ser3'])
+	rDict = {'hdr':ser0, 'msg1':ser1, 'msg2':ser2, 'msg3':ser3}
+	return rDict
+	
 def main():
     # Open the file for reading
     fd = os.open('mmaptest', os.O_RDWR)
@@ -16,16 +25,23 @@ def main():
   
     while 1:
 
-        ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
-        ser1, = unloadSerialData(buf, UdooSharedMem['ser1'])
-        ser2, = unloadSerialData(buf, UdooSharedMem['ser2'])
-        ser3, = unloadSerialData(buf, UdooSharedMem['ser3'])
+        data = filldict(buf)
+		if (data['hdr'] == 10 and data['ftr'] == 20):
+			json_data = json.dumps(data)
+			print json_data
+			print('send BtComm!')
+			## send BT comm
+		
+		#ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
+        #ser1, = unloadSerialData(buf, UdooSharedMem['ser1'])
+        #ser2, = unloadSerialData(buf, UdooSharedMem['ser2'])
+        #ser3, = unloadSerialData(buf, UdooSharedMem['ser3'])
         #ser4, = unloadSerialData(buf, UdooSharedMem['ser4'])
  
-		rDict = {'hdr':ser0, 'msg1':ser1, 'msg2':ser2, 'msg3':ser3}
-        print rDict
-		if (rDict['hdr'] == 10 and rDict['ftr'] == 20):
-			print('send BtComm!')
+		#rDict = {'hdr':ser0, 'msg1':ser1, 'msg2':ser2, 'msg3':ser3}
+        #print rDict
+		#if (rDict['hdr'] == 10 and rDict['ftr'] == 20):
+			#print('send BtComm!')
 			## send BT comm
 		#print 'ser0: %s' % (ser0)
         #print 'ser1: %s' % (ser1)
