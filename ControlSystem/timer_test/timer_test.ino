@@ -25,7 +25,8 @@ void setup(){
   // 40  : frequency (in Hz)
   // The interrupt service routine is TC3_Handler. See table.
 
-  startTimer(TC1, 0, TC3_IRQn, 1);
+  startTimer(TC1, 0, TC3_IRQn, 20);
+  startTimer(TC0, 0, TC0_IRQn, 5);
 
   // Paramters table:
   // TC0, 0, TC0_IRQn  =>  TC0_Handler()
@@ -50,8 +51,21 @@ void TC3_Handler()
   // You must do TC_GetStatus to "accept" interrupt
   // As parameters use the first two parameters used in startTimer (TC1, 0 in this case)
   TC_GetStatus(TC1, 0);
-  time = millis();
+
+  int time = millis();
   Serial.print("timer 1: ");
   Serial.println(time);
+
+}
+
+void TC0_Handler()
+{
+  // You must do TC_GetStatus to "accept" interrupt
+  // As parameters use the first two parameters used in startTimer (TC1, 0 in this case)
+  TC_GetStatus(TC0, 0);
+
+  int time2 = millis();
+  Serial.print("timer 2: ");
+  Serial.println(time2);
 
 }
