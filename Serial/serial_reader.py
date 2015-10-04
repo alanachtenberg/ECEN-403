@@ -4,6 +4,7 @@ import struct
 import time
 import json
 import Queue
+from BtComm import BtComm
 from UdooSharedMem import UdooSharedMem
   
 def unloadSerialData(buf, mem):
@@ -33,6 +34,9 @@ def fill_dict(q, rDict):
         else:
             q.put(data)
     return rDict
+	
+def rx_print(d):
+	print(d)
     
 def main():
     # Open the file for reading
@@ -43,6 +47,10 @@ def main():
 
     serial_queue = Queue.Queue()
     rDict = {}
+	
+	btcomm = BtComm()
+	btcomm.start(rx_print)
+	
   
     while 1:
         serial_queue = fill_queue(buf, serial_queue)
@@ -55,6 +63,7 @@ def main():
         #print json_data
         print('send BtComm!')
         ## send BT comm here
+		btcomm.send(json_data)
 
         
         #ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
