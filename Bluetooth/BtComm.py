@@ -20,9 +20,7 @@ class BtComm:
         self.client_info = None
         self.parse_function = None
 
-        advertise_service(self.sock, BtComm.NAME, service_id=BtComm.UUID,
-                          service_classes=[BtComm.UUID, SERIAL_PORT_CLASS],
-                          profiles=[SERIAL_PORT_PROFILE])
+        advertise_service(self.sock, BtComm.NAME, service_id=BtComm.UUID)
 
     def start(self, callback):
         """Accepts a connection from bluetooth socket and starts a thread which continuously reads
@@ -33,8 +31,8 @@ class BtComm:
         self.parse_function = callback
         logging.info("Waiting for connection on RFCOMM channel %d" % self.port);
         self.client_sock, self.client_info = self.sock.accept()
-        logging.info("Accepted connection from ", self.client_info)
-        Thread(target=self.receive_thread, args=function)
+        logging.info("Accepted connection from %s %s", self.client_info[0], self.client_info[1])
+        Thread(target=self.receive_thread)
 
     def receive_thread(self):
         try:
@@ -43,9 +41,10 @@ class BtComm:
                 logging.info("input data received [%s]" % data)
                 self.parse_function(data)
         except IOError:
-            logger.error("IOError Bluetooth Socket Receive")
+            logging.error("IOError Bluetooth Socket Receive")
             pass
 
     def send(self, data):
-        self.client_sock.send(data)
+        logging.info("Sending Over Bluetooth %s",data)
+        self.client_sock.send(data+"\n")#add new line so client can use readln on stream
 

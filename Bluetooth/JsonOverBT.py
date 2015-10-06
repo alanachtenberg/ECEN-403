@@ -2,6 +2,7 @@
 
 import logging
 import json
+import time
 from BtComm import BtComm
 from datetime import datetime
 
@@ -13,20 +14,26 @@ def parse_data(d):  # prints values from recieved over bluetooth socket, assumes
     print ("Reset: %s Warning Threshold: %d", reset, w_threshold)
 
 
-def generate_data(): # generate sample data to send over bluetooth socket
-    time = datetime.now().strftime("%H:%M:%S")
-    user = "Hugh Jazz"
+def generate_data():  # generate sample data to send over bluetooth socket
+    time = datetime.now()
+    hour = time.strftime("%H")
+    minute = time.strftime("%M")
+    second = time.strftime("%S")
     accident = False
+    velocity = 45
+    relativeVelocity = 10
     warning = True
     heartrate = 78
 
-    data = {"time": time, "user": user, "accident": accident, "warning": warning, "heartrate": heartrate}
+    data = {"time": {"hour": hour, "minute": minute, "second": second}, "accident": accident, "velocity": velocity,
+            "relativeVelocity": relativeVelocity, "warning": warning, "heartrate": heartrate}
 
     json_data = json.dumps(data)
-    print json_data
     return json_data
+
 
 logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.INFO)
 btcomm = BtComm()
 btcomm.start(parse_data)
 btcomm.send(generate_data())
+time.sleep(30)  # Keep socket open to allow time for client to read
