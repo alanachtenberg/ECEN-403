@@ -9,15 +9,15 @@ void setup()
   t->TC_CCR = TC_CCR_CLKDIS ;  // disable internal clocking while setup regs
   t->TC_IDR = 0xFFFFFFFF ;     // disable interrupts
   t->TC_SR ;                   // read int status reg to clear pending
-  t->TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1 |   // use TCLK1 (prescale by 2, = 42MHz)
+  t->TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK3 |   // use TCLK3 (prescale by 32, = 2.56MHz)
               TC_CMR_WAVE |                  // waveform mode
               TC_CMR_WAVSEL_UP_RC |          // count-up PWM using RC as threshold
               TC_CMR_EEVT_XC0 |     // Set external events from XC0 (this setup TIOB as output)
               TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
               TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
   
-  t->TC_RC =  875 ;     // counter resets on RC, so sets period in terms of 42MHz clock
-  t->TC_RA =  440 ;     // roughly square wave
+  t->TC_RC =  20000 ;     // counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  10000 ;     // roughly square wave
   t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.

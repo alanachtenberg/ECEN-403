@@ -52,9 +52,9 @@ void TC3_Handler()
   // As parameters use the first two parameters used in startTimer (TC1, 0 in this case)
   TC_GetStatus(TC1, 0);
 
-  int time = millis();
+  int time1 = millis();
   Serial.print("timer 1: ");
-  Serial.println(time);
+  Serial.println(time1);
 
 }
 
