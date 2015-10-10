@@ -26,7 +26,7 @@ void setup(){
   // The interrupt service routine is TC3_Handler. See table.
 
   startTimer(TC1, 0, TC3_IRQn, 20);
-  startTimer(TC0, 0, TC0_IRQn, 5);
+  startTimer(TC2, 0, TC6_IRQn, 5);
 
   // Paramters table:
   // TC0, 0, TC0_IRQn  =>  TC0_Handler()
