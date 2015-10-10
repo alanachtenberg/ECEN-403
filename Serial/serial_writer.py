@@ -7,7 +7,7 @@ import struct
 import serial
 import time
 
-ser = serial.Serial('/dev/ttyACM0', 115200, timeout = 0) # create serial object, non blocking reads
+ser = serial.Serial('/dev/ttymxc3', 115200, timeout = 0) # create serial object, non blocking reads
 ser.flushOutput()
   
 class UdooHighLevelGateway:

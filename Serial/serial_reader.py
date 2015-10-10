@@ -47,23 +47,24 @@ def main():
 
     serial_queue = Queue.Queue()
     rDict = {}
+    Dict = {}
 	
-	btcomm = BtComm()
-	btcomm.start(rx_print)
+	#btcomm = BtComm()
+	#btcomm.start(rx_print)
 	
   
     while 1:
         serial_queue = fill_queue(buf, serial_queue)
-        rDict = fill_dict(serial_queue, rDict)
+        Dict = fill_dict(serial_queue, rDict)
 
         print("q should be correct, let's check...")
-        print(rDict)
+        print(Dict)
         
-        json_data = json.dumps(rDict)
+        json_data = json.dumps(Dict)
         #print json_data
         print('send BtComm!')
         ## send BT comm here
-		btcomm.send(json_data)
+		#btcomm.send(json_data)
 
         
         #ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
