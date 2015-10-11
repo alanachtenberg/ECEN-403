@@ -13,9 +13,9 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
 
 void setup()
 {
-  Serial.begin (9600) ; // was for debugging
-  startTimer(TC1, 0, TC3_IRQn, 20);
-  startTimer(TC2, 0, TC6_IRQn, 5);
+  Serial.begin (115200) ; // was for debugging
+
+  
   adc_setup () ;         // setup ADC
   
   pmc_enable_periph_clk (TC_INTERFACE_ID + 0*3+0) ;  // clock the TC0 channel 0
@@ -31,14 +31,17 @@ void setup()
               TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
               TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
   
-  t->TC_RC =  21000000 ;     // counter resets on RC, so sets period in terms of 42MHz clock
-  t->TC_RA =  10500000 ;     // roughly square wave
+  t->TC_RC =  420000 ;     // counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  210000 ;     // roughly square wave
   t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
 
   setup_pio_TIOA0 () ;  // drive Arduino pin 2 at 48kHz to bring clock out
   dac_setup () ;        // setup up DAC auto-triggered at 48kHz
+  
+  startTimer(TC1, 1, TC4_IRQn, 20);
+  //startTimer(TC2, 1, TC7_IRQn, 20);
 }
 
 void setup_pio_TIOA0 ()  // Configure Ard pin 2 as output from TC0 channel A (copy of trigger event)
@@ -105,7 +108,7 @@ void ADC_Handler (void)
     Serial.print("ADC value: ");
     Serial.println(val);
     Serial.print('time: ');
-    Serial.println(millis());
+    Serial.println(micros());
     samples [sptr] = val ;           // stick in circular buffer
     sptr = (sptr+1) & BUFMASK ;      // move pointer
     dac_write (0xFFF & ~val) ;       // copy inverted to DAC output FIFO
@@ -123,11 +126,11 @@ void loop()
 }
 
 // This function is called every 1/40 sec.
-void TC3_Handler()
+void TC4_Handler()
 {
   // You must do TC_GetStatus to "accept" interrupt
   // As parameters use the first two parameters used in startTimer (TC1, 0 in this case)
-  TC_GetStatus(TC1, 0);
+  TC_GetStatus(TC1, 1);
 
   int time1 = millis();
   Serial.print("timer 1: ");
@@ -135,11 +138,11 @@ void TC3_Handler()
 
 }
 
-void TC6_Handler()
+void TC7_Handler()
 {
   // You must do TC_GetStatus to "accept" interrupt
   // As parameters use the first two parameters used in startTimer (TC1, 0 in this case)
-  TC_GetStatus(TC0, 0);
+  TC_GetStatus(TC2, 1);
 
   int time2 = millis();
   Serial.print("timer 2: ");

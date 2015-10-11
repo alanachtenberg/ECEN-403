@@ -12,14 +12,14 @@ struct Heart
   int tyme; // time of measurement
 };
 
-Heart peak[1000]; //Might want to make this a dynamic array
+Heart peak[200]; //Might want to make this a dynamic array
 
 // peak.value[i] = adc measurement
 // peak.tyme[i] = micros()
 
 
 // search for the max value
-for (int i = 0; i < 1000; i++)
+for (int i = 0; i < 200; i++)
 {
   if (peak.value[i] > curr_max)
   {
