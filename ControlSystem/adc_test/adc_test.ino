@@ -37,13 +37,14 @@ void setup()
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
 
-  setup_pio_TIOA0 () ;  // drive Arduino pin 2 at 48kHz to bring clock out
-  dac_setup () ;        // setup up DAC auto-triggered at 48kHz
+  //setup_pio_TIOA0 () ;  // drive Arduino pin 2 at 48kHz to bring clock out
+  //dac_setup () ;        // setup up DAC auto-triggered at 48kHz
   
   startTimer(TC1, 1, TC4_IRQn, 20);
   //startTimer(TC2, 1, TC7_IRQn, 20);
 }
 
+/*
 void setup_pio_TIOA0 ()  // Configure Ard pin 2 as output from TC0 channel A (copy of trigger event)
 {
   PIOB->PIO_PDR = PIO_PB25B_TIOA0 ;  // disable PIO control
@@ -71,7 +72,7 @@ void dac_write (int val)
 {
   DACC->DACC_CDR = val & 0xFFF ;
 }
-
+*/
 
 
 void adc_setup ()
@@ -111,7 +112,7 @@ void ADC_Handler (void)
     Serial.println(micros());
     samples [sptr] = val ;           // stick in circular buffer
     sptr = (sptr+1) & BUFMASK ;      // move pointer
-    dac_write (0xFFF & ~val) ;       // copy inverted to DAC output FIFO
+    //dac_write (0xFFF & ~val) ;       // copy inverted to DAC output FIFO
   }
   isr_count ++ ;
 }
