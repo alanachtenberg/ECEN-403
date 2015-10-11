@@ -425,64 +425,67 @@ THRS_buf1 = [THRS_buf1 THR_SIG1];
  ser_back = 0;  %reset bandpass param   
 end
 
-%% My code
-hold on
-[pks,locs]=findpeaks(ecg_m,'MinPeakHeight',0.05,'MinPeakDistance',27);
-BPM=(max(size(pks)))
+% %% My code 
+% I need to work on this because I can't get all cases to run at same time
+% in order to find multiple errors in an array.
 
-plot(ecg_m);
-axis tight;
-title('QRS Filtered Signal');
-legend(['BPM = ' num2str(BPM)]);
-hold on
-scatter(locs,pks,'k');
-
-drop = 0;
-spike = 0;
-M = 0;
-i=1;
-for i=1:(BPM-1)
-      PeakDistance = locs(i+1)-locs(i);
-      AvgPeakDistance = 6000/BPM;
-      N = PeakDistance/AvgPeakDistance;
-      if PeakDistance>2*AvgPeakDistance
-          for K=1:(N-1)
-          hold on
-          scatter(locs(i)+K*AvgPeakDistance,0,'*','b');
-          end
-      end
-    if drop == 0
-        if spike == 0
-            if pks(i+1)<pks(i)/2
-                drop = 1;
-            end
-            if pks(i+1)>pks(i)/2
-                drop = 0;
-            end
-        end
-    end
-    
-    if spike == 0
-        if drop == 0
-            if pks(i)>3*pks(i+1)/2
-                spike = 1;
-            end
-            if pks(i)<3*pks(i+1)/2
-                spike = 0;
-            end
-        end
-    end
-    
-    if drop == 1 
-        hold on
-        scatter(locs(i+1),pks(i+1),'x','r');
-        drop = 0;
-    end
-    
-    if spike == 1
-        hold on
-        scatter(locs(i+1),pks(i+1),'*','r');
-        spike = 0;
-    end
-end
-end
+% hold on
+% [pks,locs]=findpeaks(ecg_m,'MinPeakHeight',0.05,'MinPeakDistance',27);
+% BPM=(max(size(pks)))
+% 
+% plot(ecg_m);
+% axis tight;
+% title('QRS Filtered Signal');
+% legend(['BPM = ' num2str(BPM)]);
+% hold on
+% scatter(locs,pks,'k');
+% 
+% drop = 0;
+% spike = 0;
+% M = 0;
+% i=1;
+% for i=1:(BPM-1)
+%       PeakDistance = locs(i+1)-locs(i);
+%       AvgPeakDistance = 6000/BPM;
+%       N = PeakDistance/AvgPeakDistance;
+%       if PeakDistance>2*AvgPeakDistance
+%           for K=1:(N-1)
+%           hold on
+%           scatter(locs(i)+K*AvgPeakDistance,0,'*','b');
+%           end
+%       end
+%     if drop == 0
+%         if spike == 0
+%             if pks(i+1)<pks(i)/2
+%                 drop = 1;
+%             end
+%             if pks(i+1)>pks(i)/2
+%                 drop = 0;
+%             end
+%         end
+%     end
+%     
+%     if spike == 0
+%         if drop == 0
+%             if pks(i)>3*pks(i+1)/2
+%                 spike = 1;
+%             end
+%             if pks(i)<3*pks(i+1)/2
+%                 spike = 0;
+%             end
+%         end
+%     end
+%     
+%     if drop == 1 
+%         hold on
+%         scatter(locs(i+1),pks(i+1),'x','r');
+%         drop = 0;
+%     end
+%     
+%     if spike == 1
+%         hold on
+%         scatter(locs(i+1),pks(i+1),'*','r');
+%         spike = 0;
+%     end
+% end
+% end
