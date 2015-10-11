@@ -149,14 +149,6 @@ NOISL_buf1 = [];
 THRS_buf1 = [];
 
 
-%% Plot differently based on filtering settings
-if gr
- if fs == 200
-  figure,  ax(1)=subplot(321);plot(ecg);axis tight;title('Raw ECG Signal');
- else
-  figure,  ax(1)=subplot(3,2,[1 2]);plot(ecg);axis tight;title('Raw ECG Signal');
- end
-end    
 %% Noise cancelation(Filtering) % Filters (Filter in between 5-15 Hz)
 if fs == 200
 %% Low Pass Filter  H(z) = ((1 - z^(-6))^2)/(1 - z^(-1))^2
@@ -166,9 +158,7 @@ h_l = filter(b,a,[1 zeros(1,12)]);
 ecg_l = conv (ecg ,h_l);
 ecg_l = ecg_l/ max( abs(ecg_l));
 delay = 6; %based on the paper
-% if gr
-% ax(2)=subplot(322);plot(ecg_l);axis tight;title('Low pass filtered');
-% end
+
 %% High Pass filter H(z) = (-1+32z^(-16)+z^(-32))/(1+z^(-1))
 b = [-1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 32 -32 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1];
 a = [1 -1];
@@ -176,9 +166,7 @@ h_h = filter(b,a,[1 zeros(1,32)]);
 ecg_h = conv (ecg_l ,h_h);
 ecg_h = ecg_h/ max( abs(ecg_h));
 delay = delay + 16; % 16 samples for highpass filtering
-% if gr
-% ax(3)=subplot(323);plot(ecg_h);axis tight;title('High Pass Filtered');
-% end
+
 else
 %% bandpass filter for Noise cancelation of other sampling frequencies(Filtering)
 f1=5; %cuttoff low frequency to get rid of baseline wander
@@ -188,34 +176,20 @@ N = 3; % order of 3 less processing
 [a,b] = butter(N,Wn); %bandpass filtering
 ecg_h = filtfilt(a,b,ecg);
 ecg_h = ecg_h/ max( abs(ecg_h));
-% if gr
-% ax(3)=subplot(323);plot(ecg_h);axis tight;title('Band Pass Filtered');
-% end
+
 end
 %% derivative filter H(z) = (1/8T)(-z^(-2) - 2z^(-1) + 2z + z^(2))
 h_d = [-1 -2 0 2 1]*(1/8);%1/8*fs
 ecg_d = conv (ecg_h ,h_d);
 ecg_d = ecg_d/max(ecg_d);
 delay = delay + 2; % delay of derivative filter 2 samples
-% if gr
-% ax(4)=subplot(324);plot(ecg_d);axis tight;title('Filtered with the derivative filter');
-% end
+
 %% Squaring nonlinearly enhance the dominant peaks
 ecg_s = ecg_d.^2;
-% if gr
-% ax(5)=subplot(325);plot(ecg_s);axis tight;title('Squared');
-% end
-
-
 
 %% Moving average Y(nt) = (1/N)[x(nT-(N - 1)T)+ x(nT - (N - 2)T)+...+x(nT)]
 ecg_m = conv(ecg_s ,ones(1 ,round(0.150*fs))/round(0.150*fs));
 delay = delay + 15;
-
-if gr
-ax(6)=subplot(3,2,[5 6]);plot(ecg_m);axis tight;title('Averaged with 30 samples length,Black noise,Green Adaptive Threshold,RED Sig Level,Red circles QRS adaptive threshold');
-axis tight;
-end
 
 %% Fiducial Mark 
 % Note : a minimum distance of 40 samples is considered between each R wave
@@ -223,15 +197,11 @@ end
 % 200 msec distance
 [pks,locs] = findpeaks(ecg);
 
-
-
-
 % initialize the training phase (2 seconds of the signal) to determine the THR_SIG and THR_NOISE
 THR_SIG = max(ecg_m(1:2*fs))*1/3; % 0.25 of the max amplitude 
 THR_NOISE = mean(ecg_m(1:2*fs))*1/2; % 0.5 of the mean signal is considered to be noise
 SIG_LEV= THR_SIG;
 NOISE_LEV = THR_NOISE;
-
 
 %% Initialize bandpath filter threshold(2 seconds of the bandpass signal)
 THR_SIG1 = max(ecg_h(1:2*fs))*1/3; % 0.25 of the max amplitude 
@@ -240,8 +210,7 @@ SIG_LEV1 = THR_SIG1; % Signal level in Bandpassed filter
 NOISE_LEV1 = THR_NOISE1; % Noise level in Bandpassed filter
 %% Thresholding and online desicion rule
 
-for i = 1 : length(pks)
-    
+for i = 1 : length(pks)   
    %% locate the corresponding peak in the filtered signal 
     if locs(i)-round(0.150*fs)>= 1 && locs(i)<= length(ecg_h)
           [y_i x_i] = max(ecg_h(locs(i)-round(0.150*fs):locs(i)));
@@ -254,8 +223,7 @@ for i = 1 : length(pks)
           end
         
      end
-    
-    
+      
   %% update the heart_rate (Two heart rate means one the moste recent and the other selected)
     if length(qrs_c) >= 9 
         
@@ -268,8 +236,7 @@ for i = 1 : length(pks)
                 %THR_NOISE = 0.5*(THR_SIG);  
                % lower down thresholds to detect better in Bandpass filtered 
                 THR_SIG1 = 0.5*(THR_SIG1);
-                %THR_NOISE1 = 0.5*(THR_SIG1); 
-                
+                %THR_NOISE1 = 0.5*(THR_SIG1);            
         else
             m_selected_RR = mean_RR; %the latest regular beats mean
         end 
@@ -385,15 +352,9 @@ for i = 1 : length(pks)
         %end
         
          %adjust Noise level in MVI
-        NOISE_LEV = 0.125*pks(i) + 0.875*NOISE_LEV;  
-        
-           
+        NOISE_LEV = 0.125*pks(i) + 0.875*NOISE_LEV;            
     end
-    
-    
-    
- 
-    
+      
     %% adjust the threshold with SNR
     if NOISE_LEV ~= 0 || SIG_LEV ~= 0
         THR_SIG = NOISE_LEV + 0.25*(abs(SIG_LEV - NOISE_LEV));
@@ -405,8 +366,7 @@ for i = 1 : length(pks)
         THR_SIG1 = NOISE_LEV1 + 0.25*(abs(SIG_LEV1 - NOISE_LEV1));
         THR_NOISE1 = 0.5*(THR_SIG1);
     end
-    
-    
+      
 % take a track of thresholds of smoothed signal
 SIGL_buf = [SIGL_buf SIG_LEV];
 NOISL_buf = [NOISL_buf NOISE_LEV];
@@ -417,9 +377,6 @@ SIGL_buf1 = [SIGL_buf1 SIG_LEV1];
 NOISL_buf1 = [NOISL_buf1 NOISE_LEV1];
 THRS_buf1 = [THRS_buf1 THR_SIG1];
 
-
-
-    
  skip = 0; %reset parameters
  not_nois = 0; %reset parameters
  ser_back = 0;  %reset bandpass param   
