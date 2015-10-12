@@ -1,16 +1,7 @@
-
-// These are the clock frequencies available to the timers /2,/8,/32,/128
-// 84Mhz/2 = 42.000 MHz
-// 84Mhz/8 = 10.500 MHz
-// 84Mhz/32 = 2.625 MHz
-// 84Mhz/128 = 656.250 KHz
-//
-// 42Mhz/44.1Khz = 952.38
-// 10.5Mhz/44.1Khz = 238.09 
-// 2.625Hmz/44.1Khz = 59.5
-// 656Khz/44.1Khz = 14.88 // 131200 / 656000 = .2 (.2 seconds)
-
+/* Include Libraries */
 #include <Wire.h>
+
+/* Define constants */
 #define    LIDARLite_ADDRESS   0x62          // Default I2C Address of LIDAR-Lite.
 #define    RegisterMeasure     0x00          // Register to write to initiate ranging.
 #define    MeasureValue        0x04          // Value to initiate ranging.
@@ -19,6 +10,8 @@
 #define    circum 131.94//cm
 #define    rxn_time 4.8//seconds
 #define    decel_max 223.5//cm/s^2 (assumption)
+
+/* Global Variables */
 long reading = 0;
 volatile unsigned int quarter_revolutions;
 float rps;
@@ -36,8 +29,56 @@ float v_stop_avg = 0;
 float d_stop = 0;
 float t_collision = 0;
 
+/* Function definitions */
+void adc_setup ()
+{
+  NVIC_EnableIRQ (ADC_IRQn) ;   // enable ADC interrupt vector
+  ADC->ADC_IDR = 0xFFFFFFFF ;   // disable interrupts
+  ADC->ADC_IER = 0x80 ;         // enable AD7 End-Of-Conv interrupt (Arduino pin A0)
+  ADC->ADC_CHDR = 0xFFFF ;      // disable all channels
+  ADC->ADC_CHER = 0x80 ;        // enable just A0
+  ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
+  ADC->ADC_COR = 0x00000000 ;   // All offsets off
+  
+  ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
+}
 
+void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
+  pmc_set_writeprotect(false);
+  pmc_enable_periph_clk((uint32_t)irq);
+  TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4);
+  uint32_t rc = VARIANT_MCK/128/frequency; //128 because we selected TIMER_CLOCK4 above
+  TC_SetRA(tc, channel, rc/2); //50% high, 50% low
+  TC_SetRC(tc, channel, rc);
+  TC_Start(tc, channel);
+  tc->TC_CHANNEL[channel].TC_IER=TC_IER_CPCS;
+  tc->TC_CHANNEL[channel].TC_IDR=~TC_IER_CPCS;
+  NVIC_EnableIRQ(irq);
+}
 
+void adc_timer()
+{
+  pmc_enable_periph_clk (TC_INTERFACE_ID + 0*3+0) ;  // clock the TC0 channel 0
+
+  TcChannel * t = &(TC0->TC_CHANNEL)[0] ;    // pointer to TC0 registers for its channel 0
+  t->TC_CCR = TC_CCR_CLKDIS ;  // disable internal clocking while setup regs
+  t->TC_IDR = 0xFFFFFFFF ;     // disable interrupts
+  t->TC_SR ;                   // read int status reg to clear pending
+  t->TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1 |   // use TCLK1 (prescale by 2, = 42 MHz)
+              TC_CMR_WAVE |                  // waveform mode
+              TC_CMR_WAVSEL_UP_RC |          // count-up PWM using RC as threshold
+              TC_CMR_EEVT_XC0 |     // Set external events from XC0 (this setup TIOB as output)
+              TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
+              TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
+  
+  t->TC_RC =  420000 ;     // counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  210000 ;     // roughly square wave
+  t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
+  
+  t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
+}
+
+/* Set up timers, hall sensors, Lidar and ADC */
 void setup()
 {
   Wire.begin(); // join i2c bus
@@ -50,83 +91,69 @@ void setup()
   rps = 0;
   timeold = 0;
   
-  /* turn on the timer clock in the power management controller */
-  
-  pmc_set_writeprotect(false);		 // disable write protection for pmc registers
-  pmc_enable_periph_clk(ID_TC7);	 // enable peripheral clock TC7
-
-  /* we want wavesel 01 with RC */
-  TC_Configure(/* clock */TC2,/* channel */1, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4); 
-  TC_SetRC(TC2, 1, 65600);//run every .1 seconds. 131200 for 5*/sec
-  TC_Start(TC2, 1);
-
-  // enable timer interrupts on the timer
-  TC2->TC_CHANNEL[1].TC_IER=TC_IER_CPCS;   // IER = interrupt enable register
-  TC2->TC_CHANNEL[1].TC_IDR=~TC_IER_CPCS;  // IDR = interrupt disable register
-
-  /* Enable the interrupt in the nested vector interrupt controller */
-  /* TC4_IRQn where 4 is the timer number * timer channels (3) + the channel number (=(1*3)+1) for timer1 channel1 */
-  NVIC_EnableIRQ(TC7_IRQn);
-  
+  adc_setup (); // setup ADC
+  adc_timer(); // setup timer that triggers ADC conversion
+  startTimer(TC2, 1, TC7_IRQn, 20); // start Lidar timer interrupt
 }
 
-  void loop()
+/* Main loop */
+void loop()
+{
+  //queue initially filled with zeroes; wait on queue to be filled before calculation
+  if (values_read > BUFF_SIZE && values_read!=old_values_read)
   {
-    //queue initially filled with zeroes; wait on queue to be filled before calculation
-    if (values_read > BUFF_SIZE && values_read!=old_values_read)
+    dummy_vel=0;
+    rel_vel=0;//init to 0 every time so that it does not continually increase
+    for (int i=0;i<BUFF_SIZE;++i)
     {
-      dummy_vel=0;
-      rel_vel=0;//init to 0 every time so that it does not continually increase
-      for (int i=0;i<BUFF_SIZE;++i)
-      {
-        float delta_d=(lidar_distance[i+1]-lidar_distance[i]);
-        float delta_t=(time_buff[i+1]-time_buff[i]);
-        float delta_v=(delta_d/delta_t);
-        rel_vel+=delta_v;
-        //dummy_vel+=delta_v;//for collision function
-      }
-    
-      rel_vel=rel_vel/(BUFF_SIZE-1);//minus 1, we lose a value from the difference of distance and time
-      //dummy_vel = dummy_vel/(BUFF_SIZE-1);
-      //t_collision = lidar_distance[BUFF_SIZE-1]/dummy_vel;
-      
-      
-      Serial.print("Relative Velocity(cm/s) : ");
-      Serial.println(rel_vel);
-      Serial.print("\n");
-      //Serial.print("dummyV(cm/s) : ");
-      //Serial.println(dummy_vel);
-      //Serial.print("\n");
-    
-       //Serial.print("colTime: ");
-      //Serial.println(t_collision);
-      old_values_read=values_read;
-      
-      //Serial.print("dist: ");
-      //Serial.println(reading);
-     
-      if (quarter_revolutions >=4) 
-      { //calculate revolution per second using 4 magnets
-        rps = quarter_revolutions*250/(float)((millis() - timeold));
-        v1 = rps*circum;//vehicle speed
-        timeold = millis();
-        quarter_revolutions = 0;
-        v_stop_avg = v1/2;
-        t_stop = (-v1)/(-decel_max);//time to stop based on estimated max decel
-        d_stop = v_stop_avg*t_stop;//distance to stop
-        //collision ();//Call function to detect if collision may occur
-        Serial.print("Velocity(cm/s): ");
-        Serial.println(v1);
-        Serial.print("\n");
-        Serial.print("stopping distance: ");
-        Serial.println(d_stop);
-        Serial.print("\n");
-      }
-      
-  
+      float delta_d=(lidar_distance[i+1]-lidar_distance[i]);
+      float delta_t=(time_buff[i+1]-time_buff[i]);
+      float delta_v=(delta_d/delta_t);
+      rel_vel+=delta_v;
+      //dummy_vel+=delta_v;//for collision function
     }
     
+    rel_vel=rel_vel/(BUFF_SIZE-1);//minus 1, we lose a value from the difference of distance and time
+    //dummy_vel = dummy_vel/(BUFF_SIZE-1);
+    //t_collision = lidar_distance[BUFF_SIZE-1]/dummy_vel;
+      
+      
+    Serial.print("Relative Velocity(cm/s) : ");
+    Serial.println(rel_vel);
+    Serial.print("\n");
+    //Serial.print("dummyV(cm/s) : ");
+    //Serial.println(dummy_vel);
+    //Serial.print("\n");
+    
+    //Serial.print("colTime: ");
+    //Serial.println(t_collision);
+    old_values_read=values_read;
+      
+    //Serial.print("dist: ");
+    //Serial.println(reading);
+     
+    if (quarter_revolutions >=4) 
+    { //calculate revolution per second using 4 magnets
+      rps = quarter_revolutions*250/(float)((millis() - timeold));
+      v1 = rps*circum;//vehicle speed
+      timeold = millis();
+      quarter_revolutions = 0;
+      v_stop_avg = v1/2;
+      t_stop = (-v1)/(-decel_max);//time to stop based on estimated max decel
+      d_stop = v_stop_avg*t_stop;//distance to stop
+      //collision ();//Call function to detect if collision may occur
+      Serial.print("Velocity(cm/s): ");
+      Serial.println(v1);
+      Serial.print("\n");
+      Serial.print("stopping distance: ");
+      Serial.println(d_stop);
+      Serial.print("\n");
+    }
+      
+  
   }
+    
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // INTERRUPT HANDLERS
@@ -174,36 +201,40 @@ void setup()
       Serial.println(reading); // print distance
       
       ++values_read;//increment values read
-    }    // We need to get the status to clear it and allow the interrupt to fire again
+    }
  }
 
  void magnet_detect()//This function is called whenever a north pole magnet/interrupt is detected by the hall sensor
  {
    quarter_revolutions++;
-   //Serial.println("detect");
-   //Serial.println(rps);
  }
+
  void magnet_detect2()//called when south pole detected by hall sensor. hall o/p set to low
  {
    quarter_revolutions++;
-   //Serial.println("detect2");
-   //Serial.println(rps);
  }
+ 
+ #ifdef __cplusplus
+extern "C" 
+{
+#endif
 
-   /*void collision(){
-   t_collision = lidar_distance[BUFF_SIZE-1]/dummy_vel;
-   if(t_stop < (t_collision+10)){
-     int j = 0;//do nothing
-   }
-   else if(t_stop < (t_collision+5)) {
-     Serial.print("t_stop: ");
-     Serial.println(t_stop);
-     Serial.print("t_collide: ");
-     Serial.println(t_collision);
-     Serial.println("BREAK!!! ");
-     Serial.print(" ");
-   }
-   }*/
+void ADC_Handler (void)
+{
+  if (ADC->ADC_ISR & ADC_ISR_EOC7)   // ensure there was an End-of-Conversion and we read the ISR reg
+  {
+    int val = *(ADC->ADC_CDR+7) ;    // get conversion result
+    Serial.print("ADC value: ");
+    Serial.println(val);
+    Serial.print('time: ');
+    Serial.println(micros());
+  }
+}
+
+#ifdef __cplusplus
+}
+#endif
+
      
      
    
