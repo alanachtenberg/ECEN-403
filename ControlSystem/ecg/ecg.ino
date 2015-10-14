@@ -3,8 +3,6 @@
 // and thus the sample frequency can be changed.
 
 
-int curr_max = 0;
-
 //Structure to hold ADC values and their times
 struct Heart
 {
@@ -14,8 +12,9 @@ struct Heart
 
 Heart peak[200]; //Might want to make this a dynamic array
 
-
+int curr_max = 0;
 int i = 0;
+int thresh;
 
 //////////////////////////
 /*  Inside ADC Handler  */
@@ -24,32 +23,31 @@ void adc_handler()
 {
   peak.value[i] = adc measurement
   peak.tyme[i] = micros()
-   
-  if (i == 675) // wait until you get 675 samples
+
+  if (peak.value[i] > curr_max)
+  {
+    curr_max = peak.value[i];
+    max_index = i;
+  }
+  else if (peak.value[i] == 0) // this value needs to be adjusted to what the adc reads at 0 V
+  {
+    zero_index = i;
+  }
+  else
+  {
+    if (zero_index > max_index && curr_max >= threshold) // some minimal adc value that peaks are never below
+    {
+      peak_max_array[peak_index] = curr_max; // need to be global variables. increment in main loop
+      peak_index++;
+      curr_max = 0; // reset to 0 to detect new peaks
+    }  
+  }
+  
+  i++;
+  if (i == 676) //675 + 1 samples
   {
     i = 0;
-    // set flag maybe
-    // search through array for peaks
-    for (int j = 0; j < 675; j++)
-    {
-      if (peak.value[j] >= curr_max)
-      {
-        curr_max = peak.value[i];
-        max_index = i;
-      }
-      else if (peak.value[j] == 0)
-      {
-        zero_index = j;
-      }
-      else
-      {
-        if (zero_index > max_index && curr_max >= threshold)
-        {
-          peak_max_array[peak_index] = curr_max;
-          peak_index++;
-        }  
-      }
-    }
+    // set flag and process data
   }
-  i++;
+  
 }
