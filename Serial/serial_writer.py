@@ -7,7 +7,7 @@ import struct
 import serial
 import time
 
-ser = serial.Serial('/dev/ttymxc3', 115200, timeout = 0) # create serial object, non blocking reads
+ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, non blocking reads
 ser.flushOutput()
   
 class UdooHighLevelGateway:
@@ -56,6 +56,7 @@ def main():
         sData1 = ser.readline()
         sData2 = ser.readline()
         sData3 = ser.readline()
+	print( sData0, sData1, sData2, sData3)
         #sData4 = ser.readline()
 
         try:

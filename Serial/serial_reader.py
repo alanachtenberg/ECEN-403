@@ -1,3 +1,5 @@
+import logging
+
 import mmap
 import os
 import struct
@@ -39,6 +41,7 @@ def rx_print(d):
 	print(d)
     
 def main():
+    logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.INFO)
     # Open the file for reading
     fd = os.open('mmaptest', os.O_RDWR)
   
@@ -48,9 +51,8 @@ def main():
     serial_queue = Queue.Queue()
     rDict = {}
     Dict = {}
-	
-	#btcomm = BtComm()
-	#btcomm.start(rx_print)
+    #btcomm = BtComm()
+    #btcomm.start(rx_print)
 	
   
     while 1:
@@ -64,7 +66,7 @@ def main():
         #print json_data
         print('send BtComm!')
         ## send BT comm here
-		#btcomm.send(json_data)
+        #btcomm.send(json_data)
 
         
         #ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
