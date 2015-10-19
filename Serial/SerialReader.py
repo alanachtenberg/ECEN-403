@@ -58,7 +58,11 @@ class SerialReader:
             self.callback(self.serialValueDict)
 
             ## Delete fd when done?
+			
+def serialHandler(data):
+	print(data)
 
-    if __name__ == '__main__':
-        logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.INFO)
-        main()
+if __name__ == '__main__':
+	logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.INFO)
+	serialReader = SerialReader.SerialReader("mmaptest")
+	serialReader.start(serialHandler)
