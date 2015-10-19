@@ -4,6 +4,8 @@ import struct
 import time
 import json
 import Queue
+import logging
+from threading import Thread
 from BtComm import BtComm
 from UdooSharedMem import UdooSharedMem
 
@@ -15,7 +17,7 @@ class SerialReader:
 
     def __init__(self, file_name):
         self.fd = os.open(file_name, os.O_RDWR)
-        self.mappedFile = mmap.mmap(fd, mmap.PAGESIZE)
+        self.mappedFile = mmap.mmap(self.fd, mmap.PAGESIZE)
         self.serialValues = Queue.Queue()
         self.serialValueDict = {}
         self.callback = None # callback function for handling received data
@@ -49,7 +51,7 @@ class SerialReader:
         callback -- function with 1 param that will handle recieved data
         """
         self.callback = callback
-        Thread(target=self.read_thread, args=function)
+        Thread(target=self.read_thread)
 
     def read_thread(self):
         while 1:
@@ -64,5 +66,8 @@ def serialHandler(data):
 
 if __name__ == '__main__':
 	logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.INFO)
-	serialReader = SerialReader.SerialReader("mmaptest")
+	serialReader = SerialReader("mmaptest")
 	serialReader.start(serialHandler)
+	print("type Ctrl-C to exit")
+	while 1:
+

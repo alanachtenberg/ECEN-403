@@ -58,7 +58,7 @@ def main():
         sData1 = ser.readline()
         sData2 = ser.readline()
         sData3 = ser.readline()
-		print( sData0, sData1, sData2, sData3)
+	print( sData0, sData1, sData2, sData3)
         #sData4 = ser.readline()
 
         try:
