@@ -40,7 +40,7 @@ void setup()
   //setup_pio_TIOA0 () ;  // drive Arduino pin 2 at 48kHz to bring clock out
   //dac_setup () ;        // setup up DAC auto-triggered at 48kHz
   
-  startTimer(TC1, 1, TC4_IRQn, 20);
+  //startTimer(TC1, 1, TC4_IRQn, 2);
   //startTimer(TC2, 1, TC7_IRQn, 20);
 }
 
@@ -83,9 +83,11 @@ void adc_setup ()
   ADC->ADC_CHDR = 0xFFFF ;      // disable all channels
   ADC->ADC_CHER = 0x80 ;        // enable just A0
   ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
-  ADC->ADC_COR = 0x00000000 ;   // All offsets off
+  //ADC->ADC_CGR = 0x15559556 ;  
+  ADC->ADC_COR = 0x00000081 ;   // All offsets off
   
   ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
+
 }
 
 // Circular buffer, power of two.
