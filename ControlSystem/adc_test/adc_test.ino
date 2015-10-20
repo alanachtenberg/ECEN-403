@@ -14,7 +14,6 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
 void setup()
 {
   Serial.begin (115200) ; // was for debugging
-
   
   adc_setup () ;         // setup ADC
   
@@ -37,42 +36,9 @@ void setup()
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
 
-  //setup_pio_TIOA0 () ;  // drive Arduino pin 2 at 48kHz to bring clock out
-  //dac_setup () ;        // setup up DAC auto-triggered at 48kHz
-  
   //startTimer(TC1, 1, TC4_IRQn, 2);
   //startTimer(TC2, 1, TC7_IRQn, 20);
 }
-
-/*
-void setup_pio_TIOA0 ()  // Configure Ard pin 2 as output from TC0 channel A (copy of trigger event)
-{
-  PIOB->PIO_PDR = PIO_PB25B_TIOA0 ;  // disable PIO control
-  PIOB->PIO_IDR = PIO_PB25B_TIOA0 ;   // disable PIO interrupts
-  PIOB->PIO_ABSR |= PIO_PB25B_TIOA0 ;  // switch to B peripheral
-}
-
-
-void dac_setup ()
-{
-  pmc_enable_periph_clk (DACC_INTERFACE_ID) ; // start clocking DAC
-  DACC->DACC_CR = DACC_CR_SWRST ;  // reset DAC
-
-  DACC->DACC_MR = 
-    DACC_MR_TRGEN_EN | DACC_MR_TRGSEL (1) |  // trigger 1 = TIO output of TC0
-    (0 << DACC_MR_USER_SEL_Pos) |  // select channel 0
-    DACC_MR_REFRESH (0x0F) |       // bit of a guess... I'm assuming refresh not needed at 48kHz
-    (24 << DACC_MR_STARTUP_Pos) ;  // 24 = 1536 cycles which I think is in range 23..45us since DAC clock = 42MHz
-
-  DACC->DACC_IDR = 0xFFFFFFFF ; // no interrupts
-  DACC->DACC_CHER = DACC_CHER_CH0 << 0 ; // enable chan0
-}
-
-void dac_write (int val)
-{
-  DACC->DACC_CDR = val & 0xFFF ;
-}
-*/
 
 
 void adc_setup ()
@@ -83,19 +49,13 @@ void adc_setup ()
   ADC->ADC_CHDR = 0xFFFF ;      // disable all channels
   ADC->ADC_CHER = 0x80 ;        // enable just A0
   ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
+  ADC->ADC_COR = 0x00000000 ;   // All offsets off
   //ADC->ADC_CGR = 0x15559556 ;  
-  ADC->ADC_COR = 0x00000081 ;   // All offsets off
+  //ADC->ADC_COR = 0x00000081 ;   
   
   ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
 
 }
-
-// Circular buffer, power of two.
-#define BUFSIZE 0x400
-#define BUFMASK 0x3FF
-volatile int samples [BUFSIZE] ;
-volatile int sptr = 0 ;
-volatile int isr_count = 0 ;   // this was for debugging
 
 
 #ifdef __cplusplus
@@ -112,11 +72,9 @@ void ADC_Handler (void)
     Serial.println(val);
     Serial.print('time: ');
     Serial.println(micros());
-    samples [sptr] = val ;           // stick in circular buffer
-    sptr = (sptr+1) & BUFMASK ;      // move pointer
-    //dac_write (0xFFF & ~val) ;       // copy inverted to DAC output FIFO
+
   }
-  isr_count ++ ;
+
 }
 
 #ifdef __cplusplus
