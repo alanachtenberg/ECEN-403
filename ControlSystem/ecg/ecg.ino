@@ -2,12 +2,22 @@
 // The freqency of the timer interrupt can be changed, 
 // and thus the sample frequency can be changed.
 
-#include <PEAKS.h>
+//#include <PEAKS.h>
+typedef struct Heart
+{
+  int value;
+  unsigned long tyme;
+};
 
+typedef struct Peaks
+{
+  int Value;
+  unsigned long Tyme;
+};
 
 Peaks peak_max_array[10];
 
-Heart peak[400]; //Might want to make this a dynamic array
+Heart peak[200]; //Might want to make this a dynamic array
 
 int curr_max = 0;
 int i = 0;
@@ -20,38 +30,38 @@ int max_index = 0;
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
 }
 
 void loop()
 {
-  for (i = 0; i < 402; i++) // populate the struct
+  for (i = 0; i < 202; i++) // populate the struct
   {
-    if (i == 200 || i == 400)
+    if (i == 100 || i == 200)
     {
-      peak.value[i] = 0;
-      peak.tyme[i] = micros();
+      peak[i].value = 0;
+      peak[i].tyme = millis();
     }
-    else if (i == 201 || i == 401) 
+    else if (i == 101 || i == 201) 
     {
-      peak.value[i] = 1;
-      peak.tyme[i] = micros();
+      peak[i].value = 1;
+      peak[i].tyme = millis();
     }  
     else 
     {
-    peak.value[i] = i;
-    peak.tyme[i] = micros();
+      peak[i].value = i;
+      peak[i].tyme = millis();
     }
   }
 
-  for (z = 0; z < 402; z++)
+  for (z = 0; z < 202; z++)
   {
-    if (peak.value[z] > curr_max)
+    if (peak[z].value > curr_max)
     {
-      curr_max = peak.value[z];
+      curr_max = peak[z].value;
       max_index = z;
     }
-    else if (peak.value[z] == 0) // this value needs to be adjusted to what the adc reads at 0 V
+    else if (peak[z].value == 0) // this value needs to be adjusted to what the adc reads at 0 V
     {
       zero_index = z;
     }
@@ -59,8 +69,8 @@ void loop()
     {
       if (zero_index > max_index && curr_max >= threshold) // some minimal adc value that peaks are never below
       {
-        peak_max_array.Value[peak_index] = peak.value[max_index]; // need to be global variables. increment in main loop
-        peak_max_array.Tyme[peak_index] = peak.tyme[max_index];
+        peak_max_array[peak_index].Value = peak[max_index].value; // need to be global variables. increment in main loop
+        peak_max_array[peak_index].Tyme = peak[max_index].tyme;
         peak_index++;
         curr_max = 0; // reset to 0 to detect new peaks
       }  
@@ -71,11 +81,16 @@ void loop()
   {
     for (j = 0; j <=11; j++)
     {
-      print(peak_max_array.Value[j];
-      print(peak_max_array.Tyme[j];
+      Serial.print("peak value: ");
+      Serial.println(peak_max_array[j].Value);
+      Serial.print("peak time: ");
+      Serial.println(peak_max_array[j].Tyme);
       peak_index = 0;
+      
     }
   }
+  
+  delay(1000);
 }
 
 //////////////////////////
