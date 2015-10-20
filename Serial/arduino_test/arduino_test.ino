@@ -10,16 +10,10 @@ void loop()
   float msg = 14;
   float spd = 19;
   float ftr = 21;
-    
-
+   
   Serial.println(hdr);
-  //delay(100);
   Serial.println(msg);
-  //delay(100);
   Serial.println(spd);
-  //delay(100);
   Serial.println(ftr);
-  //delay(1000);
-
 }
 
