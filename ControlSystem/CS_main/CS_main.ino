@@ -28,12 +28,11 @@ float rpm;
 float v1 = 0;
 float v2 = 0;
 float v3 = 0;
-unsigned long timeold;//in milliseconds
-unsigned long current_time=0; //in milliseconds
-float time1 = 0;
+float timeold;//in milliseconds
+float current_time=0; //in milliseconds
 float time_btwn = 0;
 float revolutions = 0;
-unsigned long time_buff[BUFF_SIZE];//in sedconds
+float time_buff[BUFF_SIZE];//in sedconds
 float distance_buff[BUFF_SIZE];//cmeters
 unsigned int   values_read=0;//current amount of values read from lidar
 unsigned int   old_values_read=0;//amount of values read since main loop last executed
@@ -46,11 +45,20 @@ float v_stop_avg = 0;
 float d_stop = 0;
 float t_collision = 0;
 float rel_accel = 0;
-float rel_vel_time = 0;
 float rel_vel_buff[BUFF_SIZE-2];
-float accel_time_buff[BUFF_SIZE-2];
 
-
+void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
+  pmc_set_writeprotect(false);
+  pmc_enable_periph_clk((uint32_t)irq);
+  TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4);
+  uint32_t rc = VARIANT_MCK/128/frequency; //128 because we selected TIMER_CLOCK4 above
+  TC_SetRA(tc, channel, rc/2); //50% high, 50% low
+  TC_SetRC(tc, channel, rc);
+  TC_Start(tc, channel);
+  tc->TC_CHANNEL[channel].TC_IER=TC_IER_CPCS;
+  tc->TC_CHANNEL[channel].TC_IDR=~TC_IER_CPCS;
+  NVIC_EnableIRQ(irq);
+}
 
 
 void setup()
@@ -65,30 +73,11 @@ void setup()
   rpm = 0;
   timeold = 0;
   
-  /* turn on the timer clock in the power management controller */
-  
-  pmc_set_writeprotect(false);		 // disable write protection for pmc registers
-  pmc_enable_periph_clk(ID_TC7);	 // enable peripheral clock TC7
-
-  /* we want wavesel 01 with RC */
-  TC_Configure(/* clock */TC2,/* channel */1, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4); 
-  TC_SetRC(TC2, 1, 65600);//run interrupt every .1 sec. f_lidar = 50hz ==> 5hz sampling rate
-  TC_Start(TC2, 1);
-
-  // enable timer interrupts on the timer
-  TC2->TC_CHANNEL[1].TC_IER=TC_IER_CPCS;   // IER = interrupt enable register
-  TC2->TC_CHANNEL[1].TC_IDR=~TC_IER_CPCS;  // IDR = interrupt disable register
-
-  /* Enable the interrupt in the nested vector interrupt controller */
-  /* TC4_IRQn where 4 is the timer number * timer channels (3) + the channel number (=(1*3)+1) for timer1 channel1 */
-  NVIC_EnableIRQ(TC7_IRQn);
-  
+  startTimer(TC2, 1, TC7_IRQn, 5);
 }
 
   void loop()
   {
-    //queue initially filled with zeroes; wait on queue to be filled before calculation
-    
     //collision(distance, rel_vel, rel_accel);
          if (values_read > BUFF_SIZE && values_read!=old_values_read)
     {
@@ -223,6 +212,9 @@ void setup()
       {
         delta_d=(distance_buff[i+1]-distance_buff[i]);
         delta_t=(time_buff[i+1]-time_buff[i]);
+        Serial.print("Delta T: ");
+        Serial.println(delta_t);
+      
         rel_velo=(delta_d/delta_t);
         rel_vel_sum+=rel_velo;
         
