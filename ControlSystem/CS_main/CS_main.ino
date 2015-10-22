@@ -30,16 +30,14 @@ float v2 = 0;
 float v3 = 0;
 unsigned long timeold;//in milliseconds
 unsigned long current_time=0; //in milliseconds
-float time1 = 0;
-float time_btwn = 0;
+float cur_time = 0;
 float revolutions = 0;
-unsigned long time_buff[BUFF_SIZE];//in sedconds
+float time_buff[BUFF_SIZE];//in sedconds
 float distance_buff[BUFF_SIZE];//cmeters
 unsigned int   values_read=0;//current amount of values read from lidar
 unsigned int   old_values_read=0;//amount of values read since main loop last executed
 float rel_vel = 0;// cm/s
 float TTC = 0;
-
 float dummy_vel = 0;
 float t_stop = 1;//s
 float v_stop_avg = 0;
@@ -49,7 +47,56 @@ float rel_accel = 0;
 float rel_vel_time = 0;
 float rel_vel_buff[BUFF_SIZE-2];
 float accel_time_buff[BUFF_SIZE-2];
+float collision_array[2];
 
+/* Function definitions */
+void adc_setup ()
+{
+  NVIC_EnableIRQ (ADC_IRQn) ;   // enable ADC interrupt vector
+  ADC->ADC_IDR = 0xFFFFFFFF ;   // disable interrupts
+  ADC->ADC_IER = 0x80 ;         // enable AD7 End-Of-Conv interrupt (Arduino pin A0)
+  ADC->ADC_CHDR = 0xFFFF ;      // disable all channels
+  ADC->ADC_CHER = 0x80 ;        // enable just A0
+  ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
+  ADC->ADC_COR = 0x00000000 ;   // All offsets off
+  
+  ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
+}
+
+void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
+  pmc_set_writeprotect(false);
+  pmc_enable_periph_clk((uint32_t)irq);
+  TC_Configure(tc, channel, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4);
+  uint32_t rc = VARIANT_MCK/128/frequency; //128 because we selected TIMER_CLOCK4 above
+  TC_SetRA(tc, channel, rc/2); //50% high, 50% low
+  TC_SetRC(tc, channel, rc);
+  TC_Start(tc, channel);
+  tc->TC_CHANNEL[channel].TC_IER=TC_IER_CPCS;
+  tc->TC_CHANNEL[channel].TC_IDR=~TC_IER_CPCS;
+  NVIC_EnableIRQ(irq);
+}
+
+void adc_timer()
+{
+  pmc_enable_periph_clk (TC_INTERFACE_ID + 0*3+0) ;  // clock the TC0 channel 0
+
+  TcChannel * t = &(TC0->TC_CHANNEL)[0] ;    // pointer to TC0 registers for its channel 0
+  t->TC_CCR = TC_CCR_CLKDIS ;  // disable internal clocking while setup regs
+  t->TC_IDR = 0xFFFFFFFF ;     // disable interrupts
+  t->TC_SR ;                   // read int status reg to clear pending
+  t->TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1 |   // use TCLK1 (prescale by 2, = 42 MHz)
+              TC_CMR_WAVE |                  // waveform mode
+              TC_CMR_WAVSEL_UP_RC |          // count-up PWM using RC as threshold
+              TC_CMR_EEVT_XC0 |     // Set external events from XC0 (this setup TIOB as output)
+              TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
+              TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
+  
+  t->TC_RC =  420000 ;     // counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  210000 ;     // roughly square wave
+  t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
+  
+  t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
+}
 
 
 
@@ -57,7 +104,6 @@ void setup()
 {
   Wire.begin(); // join i2c bus
   Serial.begin(115200); // start serial communication at 9600bps
-  pinMode(12, INPUT);
   pinMode(13, INPUT);
   attachInterrupt(13, magnet_detect, RISING);//Initialize the intterrupt pin (Arduino digital pin 2)
 
@@ -65,41 +111,28 @@ void setup()
   rpm = 0;
   timeold = 0;
   
-  /* turn on the timer clock in the power management controller */
   
-  pmc_set_writeprotect(false);		 // disable write protection for pmc registers
-  pmc_enable_periph_clk(ID_TC7);	 // enable peripheral clock TC7
-
-  /* we want wavesel 01 with RC */
-  TC_Configure(/* clock */TC2,/* channel */1, TC_CMR_WAVE | TC_CMR_WAVSEL_UP_RC | TC_CMR_TCCLKS_TIMER_CLOCK4); 
-  TC_SetRC(TC2, 1, 65600);//run interrupt every .1 sec. f_lidar = 50hz ==> 5hz sampling rate
-  TC_Start(TC2, 1);
-
-  // enable timer interrupts on the timer
-  TC2->TC_CHANNEL[1].TC_IER=TC_IER_CPCS;   // IER = interrupt enable register
-  TC2->TC_CHANNEL[1].TC_IDR=~TC_IER_CPCS;  // IDR = interrupt disable register
-
-  /* Enable the interrupt in the nested vector interrupt controller */
-  /* TC4_IRQn where 4 is the timer number * timer channels (3) + the channel number (=(1*3)+1) for timer1 channel1 */
-  NVIC_EnableIRQ(TC7_IRQn);
+  adc_setup (); // setup ADC
+  adc_timer(); // setup timer that triggers ADC conversion
+  startTimer(TC2, 1, TC7_IRQn, 5); // start Lidar timer interrupt .... delta_t = .18s
   
 }
 
   void loop()
   {
+     if (values_read > BUFF_SIZE && values_read!=old_values_read)
+     {
     //queue initially filled with zeroes; wait on queue to be filled before calculation
     
     //collision(distance, rel_vel, rel_accel);
-         if (values_read > BUFF_SIZE && values_read!=old_values_read)
-    {
-     
+
+
       rel_vel=0;//init to 0 every time so that it does not continually increase
       rel_vel = relative_velocity();
-  
       Serial.print("Relative Velocity(m/s) : ");
       Serial.println(rel_vel);
       Serial.print("\n");
-      old_values_read=values_read;
+
     
       push_velocity(rel_vel);
 
@@ -108,12 +141,21 @@ void setup()
       Serial.print("Relative Acceleration(m/s^2) : ");
       Serial.println(rel_accel);
       Serial.print("\n");
-    user_speed();
-
-       TTC = -rel_vel-(sqrt(sq(rel_vel)-2*rel_accel*(distance/100))/rel_accel);
-       Serial.println(TTC);
-    
+      collision_array[0] = distance;
+      if(rel_vel < 0)
+      collision_array[1] = rel_vel;
+      if(rel_accel < 0)
+      collision_array[2] = rel_accel;
+      user_speed();
+      Serial.print("ttc: ");
+      Serial.println(collision());
+      
+           old_values_read=values_read;
     }
+       //TTC = -rel_vel-(sqrt(sq(rel_vel)-2*rel_accel*(distance/100))/rel_accel);
+       //Serial.println(TTC);
+
+    
 //      if (quarter_revolutions >=4) 
 //      { //calculate revolution per second using 4 magnets
 //        rps = quarter_revolutions*250/(float)((millis() - timeold));
@@ -165,24 +207,19 @@ void setup()
     reading = reading << 8; // shift high byte to be high 8 bits
     reading |= Wire.read(); // receive low byte as lower 8 bits
     distance = (float)reading; //convert to meters /100
-
     current_time = millis(); //convert to seconds /1000
-   
-   
+    cur_time = (float)(current_time)/1000;
     
-    
-    if(distance < 3500 && distance > 7){//set max (35 meters) and min (.05 meters) distance values to disregard distance errors
-      //reset rel_vel calculation if unrealistic change in distance occurs
-//      if((distance_buff[BUFF_SIZE-1]-distance) > 50 || (distance_buff[BUFF_SIZE-1]-distance) < -50){
-//        values_read = 0;
+    if(distance < 3500 && distance > 7){//set max (35 meters) and min (.07 meters) distance values to disregard distance errors 
+    //reset rel_vel calculation if unrealistic change in distance occure
+     push_distance_time(distance, cur_time);
+//     if((distance_buff[BUFF_SIZE-1]-distance/100) > .5 || (distance_buff[BUFF_SIZE-1]-distance/100) < -.50){
+//      values_read = 0;
 //      }
-      
-      push_distance_time(distance, current_time);
-    
       Serial.print("Distance(m): ");
       Serial.println(distance/100); // print distance
       ++values_read;//increment values read
-    }    // We need to get the status to clear it and allow the interrupt to fire again
+    }   
     
 
  }
@@ -222,17 +259,16 @@ void setup()
    for (int i=0;i<BUFF_SIZE-1;++i)
       {
         delta_d=(distance_buff[i+1]-distance_buff[i]);
-        delta_t=(time_buff[i+1]-time_buff[i]);
+        delta_t=(float)(time_buff[i+1]-time_buff[i]);
         rel_velo=(delta_d/delta_t);
         rel_vel_sum+=rel_velo;
-        
       }
     
     return rel_vel_sum/(BUFF_SIZE-1);
 
  }
  
-  float relative_acceleration()
+ float relative_acceleration()
  {
    float rel_a=0;
    float rel_a_sum = 0;
@@ -241,7 +277,7 @@ void setup()
    for (int i=0;i<BUFF_SIZE-2;++i)
       {
         delta_rel_vel=(rel_vel_buff[i+1]-rel_vel_buff[i]);
-        delta_t=(time_buff[i+2]-time_buff[i+1]);
+        delta_t=(float)(time_buff[i+2]-time_buff[i+1]);
         rel_a=(delta_rel_vel/delta_t);
         rel_a_sum+=rel_a;
         
@@ -253,14 +289,17 @@ void setup()
  
  void push_distance_time(float distance, float time )
  {
-   for (int i=0;i<BUFF_SIZE-1;++i){//shift all values in queues left
+
+     for (int i=0;i<BUFF_SIZE-1;++i){//shift all values in queues left
         distance_buff[i]=distance_buff[i+1];
         time_buff[i]=time_buff[i+1];
-      }  
+     }  
       //assign new values to end of queue
-      distance_buff[BUFF_SIZE-1] = distance/100;
-      time_buff[BUFF_SIZE-1] = time/1000;
-  
+     distance_buff[BUFF_SIZE-1] = distance/100; //meters
+     time_buff[BUFF_SIZE-1] = time; //seconds
+
+
+          
  }
  
   void push_velocity(float velocity)
@@ -269,16 +308,14 @@ void setup()
         rel_vel_buff[i]=rel_vel_buff[i+1];
       }  
       //assign new values to end of que
-      rel_vel_buff[BUFF_SIZE-2] = velocity;// convert to seconds
+      rel_vel_buff[BUFF_SIZE-2] = velocity;
   
  }
  
- 
- 
+ float collision(){
+   float TTC = 0;
+   return TTC = (-collision_array[1]-sqrt(sq(collision_array[1])-2*collision_array[2]*collision_array[0]/100))/collision_array[2];
 
- //void collision(float dist, float relVel, float relAccel){
-   //TTC = -relVel-sqrt(sq(relVel)-2*relAccel*dist)/relAccel;
-   //Serial.println(TTC);
 
 //   if(t_stop < (t_collision+10)){
 //     int j = 0;//do nothing
@@ -291,7 +328,33 @@ void setup()
 //     Serial.println("BREAK!!! ");
 //     Serial.print(" ");
 //   }
-//}
+}
+ 
+ 
+
+#ifdef __cplusplus
+extern "C" 
+{
+#endif
+
+void ADC_Handler (void)
+{
+  if (ADC->ADC_ISR & ADC_ISR_EOC7)   // ensure there was an End-of-Conversion and we read the ISR reg
+  {
+    int val = *(ADC->ADC_CDR+7) ;    // get conversion result
+    Serial.print("ADC value: ");
+    Serial.println(val);
+    Serial.print('time: ');
+    Serial.println(micros());
+  }
+}
+
+#ifdef __cplusplus
+}
+#endif
+ 
+
+
      
      
    
