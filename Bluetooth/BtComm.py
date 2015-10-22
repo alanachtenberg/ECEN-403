@@ -6,12 +6,14 @@ __author__ = 'alan'
 
 
 class BtComm:
+    DEBUG_MODE = False
     NAME = "UDOO"
     UUID = "1afe39b3-2c5c-4bf4-a2c2-267ee767fd9d"
     RF_PORT = 3
 
     def __init__(self):
-        self.set_device_as_discoverable()
+        if not DEBUG_MODE:
+            self.set_device_as_discoverable()
         self.sock = BluetoothSocket(RFCOMM)
         self.sock.bind(("", BtComm.RF_PORT))
         self.sock.listen(1)

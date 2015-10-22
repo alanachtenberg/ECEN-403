@@ -7,9 +7,9 @@ from BtComm import BtComm
 from datetime import datetime
 
 
-def parse_data(d):  # prints values from recieved over bluetooth socket
-    logging.debug("Recieved message from phone: %m", d)
-    if d == "CLOSING CONNECTION":
+def parse_data(data):  # prints values from recieved over bluetooth socket
+    logging.debug("Recieved message from phone: %m", data)
+    if data == "CLOSING CONNECTION":
         logging.info("Client closed connection")
 
 
@@ -32,6 +32,7 @@ def generate_data():  # generate sample data to send over bluetooth socket
 
 
 logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.DEBUG)
+BtComm.DEBUG_MODE = True  # let class know not to call hciconfig which requires sudo priveleges
 btcomm = BtComm()
 btcomm.start(parse_data)
 btcomm.send(generate_data())
