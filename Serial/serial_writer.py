@@ -8,9 +8,9 @@ import serial
 import time
 
 
-ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
+#ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
 #ser = serial.Serial('/dev/ttymxc3', 115200, timeout = 0) # create serial object, non blocking reads
-ser.flushOutput()
+#ser.flushOutput()
   
 class UdooHighLevelGateway:
     def __init__(self):
@@ -54,13 +54,16 @@ def main():
     UdooGate.initialize(buf)
   
     while 1:
-        sData0 = ser.readline()
-        sData1 = ser.readline()
-        sData2 = ser.readline()
-        sData3 = ser.readline()
-		print( sData0, sData1, sData2, sData3)
+        #sData0 = ser.readline()
+        #sData1 = ser.readline()
+        #sData2 = ser.readline()
+        #sData3 = ser.readline()
+		#print( sData0, sData1, sData2, sData3)
         #sData4 = ser.readline()
-
+		sData0 = 10
+		sData1 = 11
+		sData2 = 16
+		sData3 = 20
         try:
             UdooGate.ser0.value = float(sData0)
             UdooGate.ser1.value = float(sData1)
