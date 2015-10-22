@@ -7,11 +7,10 @@ from BtComm import BtComm
 from datetime import datetime
 
 
-def parse_data(d):  # prints values from recieved over bluetooth socket, assumes reset and w_threshold keys exist
-    obj_map = json.loads(d)
-    reset = obj_map["reset"]
-    w_threshold = obj_map["w_threshold"]
-    print ("Reset: %s Warning Threshold: %d", reset, w_threshold)
+def parse_data(d):  # prints values from recieved over bluetooth socket
+    logging.debug("Recieved message from phone: %m", d)
+    if d == "CLOSING CONNECTION":
+        logging.info("Client closed connection")
 
 
 def generate_data():  # generate sample data to send over bluetooth socket
@@ -32,8 +31,9 @@ def generate_data():  # generate sample data to send over bluetooth socket
     return json_data
 
 
-logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.INFO)
+logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.DEBUG)
 btcomm = BtComm()
 btcomm.start(parse_data)
 btcomm.send(generate_data())
 time.sleep(30)  # Keep socket open to allow time for client to read
+print("main exit")
