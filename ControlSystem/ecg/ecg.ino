@@ -17,7 +17,7 @@ typedef struct Peaks
 
 Peaks peak_max_array[10];
 
-Heart peak[100]; //Might want to make this a dynamic array
+Heart peak; //Might want to make this a dynamic array
 
 int curr_max = 1500;
 int i = 0;
@@ -46,8 +46,8 @@ void setup()
               TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
               TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
   
-  t->TC_RC =  840000 ;     // 50 Hz; counter resets on RC, so sets period in terms of 42MHz clock
-  t->TC_RA =  420000 ;     // roughly square wave
+  t->TC_RC =  420000 ;     // 100 Hz; counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  210000 ;     // roughly square wave
   t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
@@ -88,8 +88,8 @@ void ADC_Handler (void)
     //Serial.println(val);
     //Serial.print('time: ');
     //Serial.println(micros());
-    peak[i].value = val;
-    peak[i].tyme = micros();
+    peak.value = val;
+    peak.tyme = millis();
     
     adc_flag = 1;
 
@@ -107,15 +107,15 @@ void loop()
 {
   if (adc_flag == 1)
   {
-    if (peak[i].value > curr_max)
+    if (peak.value > curr_max)
     {
-      curr_max = peak[i].value;
-      max_index = i;
+      curr_max = peak.value;
+      max_index = peak.tyme;
     }
     
-    else if (peak[i].value <= 1250 && peak[i].value > 1000) // this value needs to be adjusted to what the adc reads at 0 V
+    else if (peak.value <= 1250 && peak.value > 1000) // this value needs to be adjusted to what the adc reads at 0 V
     {
-      zero_index = i;
+      zero_index = peak.tyme;
     }
     
     else
@@ -125,20 +125,14 @@ void loop()
         peak_max_array[peak_index].Value = curr_max; // need to be global variables. increment in main loop
         //peak_max_array[peak_index].Tyme = millis();
         Serial.print("PV: ");
-        Serial.println(peak_max_array[peak_index].Value);
+        Serial.println(curr_max);
+        //Serial.println(peak_max_array[peak_index].Value);
         peak_index++;
         curr_max = 1500; // reset to 0 to detect new peaks
       }  
     }
     
-    i++;
-    
-    if (i == 100) //675 + 1 samples
-    {
-      i = 0;
-      // set flag and process data
-    }
-    
+  
     if (peak_index == 10)
     {
       peak_index = 0;
