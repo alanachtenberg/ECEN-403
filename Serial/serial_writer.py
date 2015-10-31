@@ -8,9 +8,9 @@ import serial
 import time
 
 
-ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
+#ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
 #ser = serial.Serial('/dev/ttymxc3', 115200, timeout = 0) # create serial object, non blocking reads
-ser.flushOutput()
+#ser.flushOutput()
   
 class UdooHighLevelGateway:
     def __init__(self):
@@ -43,7 +43,7 @@ def main():
     # Zero out the file to insure it's the right size
     assert os.write(fd, '\x00' * mmap.PAGESIZE) == mmap.PAGESIZE
   
-    # Create the mmap instace with the following params:
+    # Create the mmap instance with the following params:
     # fd: File descriptor which backs the mapping or -1 for anonymous mapping
     # length: Must in multiples of PAGESIZE (usually 4 KB)
     # flags: MAP_SHARED means other processes can share this mmap
@@ -54,19 +54,27 @@ def main():
     UdooGate.initialize(buf)
   
     while 1:
-        sData0 = ser.readline()
-        sData1 = ser.readline()
-        sData2 = ser.readline()
-        sData3 = ser.readline()
-		print( sData0, sData1, sData2, sData3)
-        #sData4 = ser.readline()
+        #sData0 = ser.readline()
+        #sData1 = ser.readline()
+        #sData2 = ser.readline()
+        #sData3 = ser.readline()
+		#sData4 = ser.readline()
+		
+		sData0 = 5
+        sData1 = 8
+        sData2 = 11
+        sData3 = 14
+		sData4 = 17
+		
+		print( sData0, sData1, sData2, sData3, sData4)
+        
 
         try:
             UdooGate.ser0.value = float(sData0)
             UdooGate.ser1.value = float(sData1)
             UdooGate.ser2.value = float(sData2)
             UdooGate.ser3.value = float(sData3)
-            #UdooGate.ser4.value = float(sData4)
+            UdooGate.ser4.value = float(sData4)
 
         except ValueError:
             pass

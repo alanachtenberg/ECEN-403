@@ -24,8 +24,8 @@ UdooSharedMem = {
             'Offset' : 16,
             'Size' : 4
             },
-	'ser5' : {
-	    'Type' : 'f',
+		'ser5' : {
+			'Type' : 'f',
             'Offset' : 20,
             'Size' : 4
 	    }
