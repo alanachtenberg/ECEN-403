@@ -5,16 +5,16 @@ import time
 import json
 import Queue
 from threading import Thread
-from BtComm import BtComm
+#from BtComm import BtComm
 from UdooSharedMem import UdooSharedMem
 
 import logging
 
 
 class SerialReader:
-    HEADER_VALUE = 8
-    VALUE_NAMES = ("ser0", "ser1", "ser2", "ser3")
-    STRUCTURE_FORMAT = ("hdr", "val1", "val2", "ftr")
+    HEADER_VALUE = 5
+    VALUE_NAMES = ("ser0", "ser1", "ser2", "ser3", "ser4")
+    STRUCTURE_FORMAT = ("hdr", "val1", "val2", "val3", "ftr")
 
     def __init__(self, file_name):
         self.fd = os.open(file_name, os.O_RDWR)
@@ -41,6 +41,7 @@ class SerialReader:
                 self.serialValueDict['hdr'] = data
                 self.serialValueDict['val1'] = self.serialValues.get()
                 self.serialValueDict['val2'] = self.serialValues.get()
+                self.serialValueDict['val3'] = self.serialValues.get()
                 self.serialValueDict['ftr'] = self.serialValues.get()
                 logging.debug("Value Dict")
                 logging.debug(self.serialValueDict)
