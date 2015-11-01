@@ -13,11 +13,19 @@ def unloadSerialData(buf, mem):
     return struct.unpack(mem["Type"], buf[mem["Offset"]:mem["Offset"]+mem["Size"]])
  
 def fill_dict(buf, rDict):
-    rDict['hdr'] = unloadSerialData(buf, UdooSharedMem['ser0'])
-    rDict['val1'] = unloadSerialData(buf, UdooSharedMem['ser1'])
-    rDict['val2'] = unloadSerialData(buf, UdooSharedMem['ser2'])
-    rDict['val3'] = unloadSerialData(buf, UdooSharedMem['ser3'])
-    rDict['ftr'] = unloadSerialData(buf, UdooSharedMem['ser4'])
+    if (unloadSerialData(buf, UdooSharedMem['ecg']) == '1'):    
+        rDict['hdr2'] = unloadSerialData(buf, UdooSharedMem['hdr2'])
+        rDict['k_val1'] = unloadSerialData(buf, UdooSharedMem['k_val1'])
+        rDict['ftr2'] = unloadSerialData(buf, UdooSharedMem['ftr2'])
+        # set ecg to 0
+        #struct.pack_into(mem["Type"]
+    elif (unloadSerialData(buf, UdooSharedMem['kine']) == '1'):
+        rDict['hdr'] = unloadSerialData(buf, UdooSharedMem['hdr'])
+        rDict['val1'] = unloadSerialData(buf, UdooSharedMem['val1'])
+        rDict['val2'] = unloadSerialData(buf, UdooSharedMem['val2'])
+        rDict['val3'] = unloadSerialData(buf, UdooSharedMem['val3'])
+        rDict['ftr'] = unloadSerialData(buf, UdooSharedMem['ftr'])
+        # set kine to 0
     return rDict
 
 def rx_print(d):
