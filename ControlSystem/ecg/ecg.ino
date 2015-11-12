@@ -15,7 +15,7 @@ typedef struct Peaks
   unsigned long Tyme;
 };
 
-Peaks peak_max_array[10];
+Peaks peak_max_array[40];
 
 Heart peak; //Might want to make this a dynamic array
 
@@ -46,8 +46,8 @@ void setup()
               TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
               TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
   
-  t->TC_RC =  420000 ;     // 100 Hz; counter resets on RC, so sets period in terms of 42MHz clock
-  t->TC_RA =  210000 ;     // roughly square wave
+  t->TC_RC =  42000 ;     // 1000 Hz; counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  21000 ;     // roughly square wave
   t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
@@ -85,7 +85,7 @@ void ADC_Handler (void)
   {
     int val = *(ADC->ADC_CDR+7) ;    // get conversion result
     //Serial.print("ADC value: ");
-    //Serial.println(val);
+    Serial.println(val);
     //Serial.print('time: ');
     //Serial.println(micros());
     peak.value = val;
@@ -111,6 +111,7 @@ void loop()
     {
       curr_max = peak.value;
       max_index = peak.tyme;
+      
     }
     
     else if (peak.value <= 1250 && peak.value > 1000) // this value needs to be adjusted to what the adc reads at 0 V
@@ -124,8 +125,9 @@ void loop()
       {
         peak_max_array[peak_index].Value = curr_max; // need to be global variables. increment in main loop
         //peak_max_array[peak_index].Tyme = millis();
-        Serial.print("PV: ");
-        Serial.println(curr_max);
+        //Serial.print("PV: ");
+        //Serial.println(curr_max);
+        //Serial.println(peak.tyme);
         //Serial.println(peak_max_array[peak_index].Value);
         peak_index++;
         curr_max = 1500; // reset to 0 to detect new peaks
