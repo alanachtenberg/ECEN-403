@@ -11,7 +11,7 @@ typedef struct Heart
 
 typedef struct Peaks
 {
-  int Value;
+  float Value;
   unsigned long Tyme;
 };
 
@@ -20,12 +20,15 @@ Peaks peak_max_array[40];
 Heart peak; //Might want to make this a dynamic array
 
 int curr_max = 1500;
-int i = 0;
 int threshold = 1800;
 int peak_index = 0;
-int zero_index = 0;
-int max_index = 0;
+int zero_time = 0;
+int max_time = 0;
 int adc_flag = 0;
+int max_rate_change = 167; // 1/6 seconds --> 167 milliseconds
+float VoltageAvg = 0;
+float VoltageSum = 0;
+int BPM = 0;
 
 void setup()
 {
@@ -63,8 +66,6 @@ void adc_setup ()
   ADC->ADC_CHER = 0x80 ;        // enable just A0
   ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
   ADC->ADC_COR = 0x00000000 ;   // All offsets off
-  //ADC->ADC_CGR = 0x15559556 ;  
-  //ADC->ADC_COR = 0x00000081 ;   
   
   ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
 
@@ -83,16 +84,15 @@ void ADC_Handler (void)
 {
   if (ADC->ADC_ISR & ADC_ISR_EOC7)   // ensure there was an End-of-Conversion and we read the ISR reg
   {
-    int val = *(ADC->ADC_CDR+7) ;    // get conversion result
+    //int val = *(ADC->ADC_CDR+7) ;    // get conversion result
     //Serial.print("ADC value: ");
-    Serial.println(val);
+    //Serial.println(val);
     //Serial.print('time: ');
     //Serial.println(micros());
-    peak.value = val;
+    peak.value = *(ADC->ADC_CDR+7) ;    // get conversion result
     peak.tyme = millis();
     
     adc_flag = 1;
-
   
   }
 
@@ -110,38 +110,70 @@ void loop()
     if (peak.value > curr_max)
     {
       curr_max = peak.value;
-      max_index = peak.tyme;
+      max_time = peak.tyme;
       
     }
     
     else if (peak.value <= 1250 && peak.value > 1000) // this value needs to be adjusted to what the adc reads at 0 V
     {
-      zero_index = peak.tyme;
+      zero_time = peak.tyme;
     }
     
     else
     {
-      if (zero_index > max_index && curr_max >= threshold) // some minimal adc value that peaks are never below
+      if (zero_time > max_time && curr_max >= threshold) // some minimal adc value that peaks are never below
       {
-        peak_max_array[peak_index].Value = curr_max; // need to be global variables. increment in main loop
-        //peak_max_array[peak_index].Tyme = millis();
+        peak_max_array[peak_index].Value = (peak.value/4096)*3.3; // convert to a voltage 
+        peak_max_array[peak_index].Tyme = peak.tyme;
         //Serial.print("PV: ");
         //Serial.println(curr_max);
         //Serial.println(peak.tyme);
         //Serial.println(peak_max_array[peak_index].Value);
+        VoltageSum = VoltageSum + peak_max_array[peak_index].Value;
         peak_index++;
         curr_max = 1500; // reset to 0 to detect new peaks
+        
       }  
-    }
-    
-  
-    if (peak_index == 10)
-    {
-      peak_index = 0;
     }
     
   adc_flag = 0;
   
+  }
+  
+  if (peak_index == 40)
+  {
+    // get voltage average to compute low voltage peaks
+    VoltageAvg = VoltageSum/40;
+    
+    for(int i = 0; i < 38; i++) // 38 because we're looking at i + 2
+    {
+      if(peak_max_array[i+2].Tyme - peak_max_array[i+1].Tyme > (peak_max_array[i+1].Tyme - peak_max_array[i].Tyme) + max_rate_change ||
+         peak_max_array[i+2].Tyme - peak_max_array[i+1].Tyme > (peak_max_array[i+1].Tyme - peak_max_array[i].Tyme) - max_rate_change) 
+      {
+        // missed beat
+      }
+      
+      if(peak_max_array[i].Value <= (VoltageAvg/2)) // low voltage peak if it's less than half
+      {
+        // low voltage peak
+      }
+      
+    }
+    
+    // access 39th and 40th indices directly since for loop only goes to 38
+    if(peak_max_array[39].Value <= (VoltageAvg/2)) // low voltage peak if it's less than half
+    {
+      // low voltage peak
+    }
+    if(peak_max_array[40].Value <= (VoltageAvg/2)) // low voltage peak if it's less than half
+    {
+      // low voltage peak
+    }
+    
+    // get BPM
+    BPM = (40/(peak_max_array[40].Tyme - peak_max_array[0].Tyme))*60000; // Beats/ms * 1000 * 60 = Beats/min
+    VoltageSum = 0;
+    peak_index = 0;
   }
   
 }
