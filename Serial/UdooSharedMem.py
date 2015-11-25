@@ -1,50 +1,50 @@
 UdooSharedMem = {
-        'hdr' : {
+        'EcgHdr' : {
             'Type' : 'c',
             'Offset' : 0,
             'Size' : 1
             },
-        'val1' : {
+        'BPM' : {
             'Type' : 'f',
             'Offset' : 1,
             'Size' : 4
             },
-        'val2' : {
-            'Type' : 'f',
+        'MbFlag' : {
+            'Type' : 'i',
             'Offset' : 5,
             'Size' : 4
             },
-        'val3' : {
-            'Type' : 'f',
+        'LvpFlag' : {
+            'Type' : 'i',
             'Offset' : 9,
             'Size' : 4
             },
-        'ftr' : {
-            'Type' : 'c',
-            'Offset' : 13,
-            'Size' : 1
-            },
-        'hdr2' : {
-            'Type' : 'c',
-            'Offset' : 14,
-            'Size' : 1
-            },
-        'k_val1' : {
+        'LvpValue' : {
             'Type' : 'f',
-            'Offset' : 15,
+            'Offset' : 13,
             'Size' : 4
+            },
+        'EcgFtr' : {
+            'Type' : 'c',
+            'Offset' : 17,
+            'Size' : 1
+            },
+        'KineHdr' : {
+            'Type' : 'c',
+            'Offset' : 18,
+            'Size' : 1
             },
         'ftr2' : {
             'Type' : 'c',
             'Offset' : 19,
             'Size' : 1
             },
-        'kine' : {
+        'KineFlag' : {
             'Type' : 'c',
             'Offset' : 20,
             'Size' : 1
             },
-        'ecg' : {
+        'EcgFlag' : {
             'Type' : 'c',
             'Offset' : 21,
             'Size' : 1

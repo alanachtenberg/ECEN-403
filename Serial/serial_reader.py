@@ -13,19 +13,20 @@ def unloadSerialData(buf, mem):
     return struct.unpack(mem["Type"], buf[mem["Offset"]:mem["Offset"]+mem["Size"]])
  
 def fill_dict(buf, rDict):
-    if (unloadSerialData(buf, UdooSharedMem['ecg'])[0] == '1'):    
-        rDict['hdr2'] = unloadSerialData(buf, UdooSharedMem['hdr2'])[0]
+    if (unloadSerialData(buf, UdooSharedMem['KineFlag'])[0] == '1'):    
+        rDict['KineHdr'] = unloadSerialData(buf, UdooSharedMem['KineHdr'])[0]
         rDict['k_val1'] = unloadSerialData(buf, UdooSharedMem['k_val1'])[0]
-        rDict['ftr2'] = unloadSerialData(buf, UdooSharedMem['ftr2'])[0]
-        # set ecg to 0
+        rDict['KineFtr'] = unloadSerialData(buf, UdooSharedMem['KineFtr'])[0]
+        # set KineFlag to 0
         #struct.pack_into(mem["Type"]
-    elif (unloadSerialData(buf, UdooSharedMem['kine'])[0] == '1'):
-        rDict['hdr'] = unloadSerialData(buf, UdooSharedMem['hdr'])[0]
-        rDict['val1'] = unloadSerialData(buf, UdooSharedMem['val1'])[0]
-        rDict['val2'] = unloadSerialData(buf, UdooSharedMem['val2'])[0]
-        rDict['val3'] = unloadSerialData(buf, UdooSharedMem['val3'])[0]
-        rDict['ftr'] = unloadSerialData(buf, UdooSharedMem['ftr'])[0]
-        # set kine to 0
+    elif (unloadSerialData(buf, UdooSharedMem['EcgFlag'])[0] == '1'):
+        rDict['EcgHdr'] = unloadSerialData(buf, UdooSharedMem['EcgHdr'])[0]
+        rDict['BPM'] = unloadSerialData(buf, UdooSharedMem['BPM'])[0]
+		rDict['MbFlag'] = unloadSerialData(buf, UdooSharedMem['MbFlag'])[0]
+        rDict['LvpFlag'] = unloadSerialData(buf, UdooSharedMem['LvpFlag'])[0]
+        rDict['LvpValue'] = unloadSerialData(buf, UdooSharedMem['LvpValue'])[0]
+        rDict['EcgFtr'] = unloadSerialData(buf, UdooSharedMem['EcgFtr'])[0]
+        # set EcgFlag to 0
     return rDict
 
 def rx_print(d):

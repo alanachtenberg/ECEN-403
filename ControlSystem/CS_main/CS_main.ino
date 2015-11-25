@@ -12,12 +12,17 @@ void setup()
 
   adc_setup();// setup ADC
   startADC();
-  startTimer(TC2, 1, TC7_IRQn,20); // start Lidar timer interrupt .... delta_t = .18s 
+  //startTimer(TC2, 1, TC7_IRQn,20); // start Lidar timer interrupt .... delta_t = .18s 
 }
 
 double past_vel;
 void loop()
 {
+  int MbFlag = 0;
+  int LvpFlag = 0;
+  float LvpValue = 0;
+  float BPM = 0;
+  
   while (wait != 1)
   {
     if (values_read > BUFF_SIZE)
@@ -51,6 +56,8 @@ void loop()
         //Serial.print("ttc: ");
         //Serial.println(ttc, 4);
         
+        // Based on ttc and our vehicle's velocity, determine if there is danger to the driver
+        // maybe include whether or not they're looking
         
         /*if (ttc <= 15 && ttc > 3)
           /light_yellow();
@@ -103,7 +110,7 @@ void loop()
         peak_max_array[peak_index].Value = (peak.value/4096)*3.3; // convert to a voltage 
         peak_max_array[peak_index].Tyme = peak.tyme;
         //Serial.print("PV: ");
-        //Serial.println(curr_max);
+        Serial.println(curr_max);
         //Serial.println(peak.tyme);
         //Serial.println(peak_max_array[peak_index].Value);
         VoltageSum = VoltageSum + peak_max_array[peak_index].Value;
@@ -119,20 +126,24 @@ void loop()
   
   if (peak_index == 40)
   {
-    // get voltage average to compute low voltage peaks
-    VoltageAvg = VoltageSum/40;
+    
+    VoltageAvg = VoltageSum/40; // get voltage average to compute low voltage peaks
     
     for(int i = 0; i < 38; i++) // 38 because we're looking at i + 2
     {
       if(peak_max_array[i+2].Tyme - peak_max_array[i+1].Tyme > (peak_max_array[i+1].Tyme - peak_max_array[i].Tyme) + max_rate_change ||
          peak_max_array[i+2].Tyme - peak_max_array[i+1].Tyme > (peak_max_array[i+1].Tyme - peak_max_array[i].Tyme) - max_rate_change) 
       {
-        // missed beat
+        
+        MbFlag = 1; // missed beat
+
       }
       
       if(peak_max_array[i].Value <= (VoltageAvg/2)) // low voltage peak if it's less than half
       {
         // low voltage peak
+        LvpFlag = 1;
+        LvpValue = peak_max_array[i].Value;
       }
       
     }
@@ -141,17 +152,30 @@ void loop()
     if(peak_max_array[39].Value <= (VoltageAvg/2)) // low voltage peak if it's less than half
     {
       // low voltage peak
+      LvpFlag = 1;
+      LvpValue = peak_max_array[i].Value;
     }
     if(peak_max_array[40].Value <= (VoltageAvg/2)) // low voltage peak if it's less than half
     {
       // low voltage peak
+      LvpFlag = 1;
+      LvpValue = peak_max_array[i].Value;
     }
     
     // get BPM
     BPM = (40/(peak_max_array[40].Tyme - peak_max_array[0].Tyme))*60000; // Beats/ms * 1000 * 60 = Beats/min
+    // Send BPM, low voltage peaks, and missed beats
+    // Serial.println('e'); // ECG message header
+    // Serial.println(BPM); // Beats per Minute
+    // Serial.println(MbFlag); // Missed Beat Flag (0 or 1)
+    // Serial.println(LvpFlag); // Low Voltage Peak Flag (0 or 1)
+    // Serial.println(LvpValue); // Low Voltage Peak Value
+    // Serial.println('f'); // ECG footer
+    
     VoltageSum = 0;
     peak_index = 0;
   }
+    
 }
   
 void TC7_Handler()

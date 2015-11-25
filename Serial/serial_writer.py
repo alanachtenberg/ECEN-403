@@ -15,39 +15,42 @@ import logging
   
 class UdooHighLevelGateway:
     def __init__(self):
-        self.hdr   = 0 # char
-        self.val1   = 0.0 # float
-        self.val2   = 0.0 # float
-        self.val3   = 0.0 # float
-        self.ftr   = 0 # char
-        self.hdr2   = 0 # char
+        self.EcgHdr   = 0 # char
+        self.BPM      = 0.0 # float
+        self.MbFlag   = 0.0 # int
+        self.LvpFlag  = 0.0 # int
+		self.LvpValue = 0 # int
+        self.EcgFtr   = 0 # char
+        self.KineHdr     = 0 # char
         self.k_val1   = 0.0 # float
-        self.ftr2   = 0 # char
-        self.kine = 0
-        self.ecg = 0
-        self.offset = 0
+        self.KineFtr     = 0 # char
+        self.KineFlag     = 0
+        self.EcgFlag      = 0
+        self.offset   = 0
  
     def initialize(self, buf):
-        self.hdr = ctypes.c_char.from_buffer(buf)
-        self.offset = struct.calcsize(self.hdr._type_)
-        self.val1 = ctypes.c_float.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.val1._type_)
-        self.val2 = ctypes.c_float.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.val2._type_)
-        self.val3 = ctypes.c_float.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.val3._type_)
-        self.ftr = ctypes.c_char.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.ftr._type_)
-        self.hdr2 = ctypes.c_char.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.hdr2._type_)
+        self.EcgHdr = ctypes.c_char.from_buffer(buf)
+        self.offset = struct.calcsize(self.EcgHdr._type_)
+        self.BPM = ctypes.c_float.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.BPM._type_)
+        self.MbFlag = ctypes.c_int.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.MbFlag._type_)
+        self.LvpFlag = ctypes.c_int.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.LvpFlag._type_)
+		self.LvpValue = ctypes.c_float.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.LvpValue._type_)
+        self.EcgFtr = ctypes.c_char.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.EcgFtr._type_)
+		self.KineHdr = ctypes.c_char.from_buffer(buf)
+        self.offset = struct.calcsize(self.KineHdr._type_)
         self.k_val1 = ctypes.c_float.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.k_val1._type_)
-        self.ftr2 = ctypes.c_char.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.ftr2._type_)
-        self.kine = ctypes.c_char.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.kine._type_)
-        self.ecg = ctypes.c_char.from_buffer(buf, self.offset)
-        self.offset += struct.calcsize(self.ecg._type_)
+        self.KineFtr = ctypes.c_char.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.KineFtr._type_)
+        self.KineFlag = ctypes.c_char.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.KineFlag._type_)
+        self.EcgFlag = ctypes.c_char.from_buffer(buf, self.offset)
+        self.offset += struct.calcsize(self.EcgFlag._type_)
   
 
 def fill_dict(serialValues, UdooGate, serialValueDict):
@@ -55,21 +58,22 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
         data = serialValues.get()
         logging.debug("Header %f", data)
         if data == 'e':
-            serialValueDict['hdr'] = data
-            serialValueDict['val1'] = serialValues.get()
-            serialValueDict['val2'] = serialValues.get()
-            serialValueDict['val3'] = serialValues.get()
-            serialValueDict['ftr'] = serialValues.get()
-            #print(serialValueDict)            
+            serialValueDict['EcgHdr'] = data
+            serialValueDict['BPM'] = serialValues.get()
+            serialValueDict['MbFlag'] = serialValues.get()
+            serialValueDict['LvpFlag'] = serialValues.get()
+			serialValueDict['LvpValue'] = serialValues.get()
+            serialValueDict['EcgFtr'] = serialValues.get()
             logging.debug("Value Dict")
             logging.debug(serialValueDict)
             try:
-                UdooGate.hdr.value = serialValueDict['hdr']
-                UdooGate.val1.value = float(serialValueDict['val1'])
-                UdooGate.val2.value = float(serialValueDict['val2'])
-                UdooGate.val3.value = float(serialValueDict['val3'])
-                UdooGate.ftr.value = serialValueDict['ftr']
-                UdooGate.kine.value = '1'
+                UdooGate.EcgHdr.value = serialValueDict['EcgHdr']
+                UdooGate.BPM.value = float(serialValueDict['BPM'])
+                UdooGate.MbFlag.value = serialValueDict['MbFlag']
+                UdooGate.LvpFlag.value = float(serialValueDict['LvpFlag'])
+				UdooGate.LvpValue.value = float(serialValueDict['LvpValue'])
+                UdooGate.EcgFtr.value = serialValueDict['EcgFtr']
+                UdooGate.EcgFlag.value = '1'
 
             except ValueError:
                 pass
@@ -77,17 +81,17 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
             break
 
         elif data == 'k':        
-            serialValueDict['hdr2'] = data
+            serialValueDict['KineHdr'] = data
             serialValueDict['k_val1'] = serialValues.get()
-            serialValueDict['ftr2'] = serialValues.get()
+            serialValueDict['KineFtr'] = serialValues.get()
             logging.debug("Value Dict")
             logging.debug(serialValueDict)
             print(serialValueDict)
             try:
-                UdooGate.hdr2.value = serialValueDict['hdr2']
+                UdooGate.KineHdr.value = serialValueDict['KineHdr']
                 UdooGate.k_val1.value = float(serialValueDict['k_val1'])
-                UdooGate.ftr2.value = serialValueDict['ftr2']
-                UdooGate.ecg.value = '1'
+                UdooGate.KineFtr.value = serialValueDict['KineFtr']
+                UdooGate.KineFlag.value = '1'
 
             except ValueError:
                 pass
@@ -121,32 +125,19 @@ def main():
     serialValueDict = {}
   
     while 1:
-        #sData0 = ser.readline()
-        #sData1 = ser.readline()
-        #sData2 = ser.readline()
-        #sData3 = ser.readline()
-	    #sData4 = ser.readline()
-		
-        #sData0 = 11
-        #serialValues.put(sData0)
-        #sData1 = 14
-        #serialValues.put(sData1)
-        #sData2 = 'f'
-        #serialValues.put(sData2)
-        #sData3 = 'E'
-        #serialValues.put(sData3)
-        #sData4 = 8
-        #serialValues.put(sData4)
+        sData0 = ser.readline()
+        sData1 = ser.readline()
+        sData2 = ser.readline()
+        sData3 = ser.readline()
+	    sData4 = ser.readline()
+		sData5 = ser.readline()
 
-
-        sData0 = 9
         serialValues.put(sData0)
-        sData1 = 'f'
         serialValues.put(sData1)
-        sData2 = 'k'
         serialValues.put(sData2)
-		
-        #print(sData0, sData1, sData2, sData3, sData4)
+        serialValues.put(sData3)
+        serialValues.put(sData4)
+		serialValues.put(sData5)
 
         fill_dict(serialValues, UdooGate, serialValueDict)
         

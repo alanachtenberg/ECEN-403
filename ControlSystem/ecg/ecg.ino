@@ -2,16 +2,107 @@
 // The freqency of the timer interrupt can be changed, 
 // and thus the sample frequency can be changed.
 
-#include "ECG.h"
+//#include "ECG.h"
+
+int curr_max = 1500;
+int threshold = 1800;
+int peak_index = 0;
+int zero_time = 0;
+int max_time = 0;
+int adc_flag = 0;
+int max_rate_change = 167; // 1/6 seconds --> 167 milliseconds
+float VoltageAvg = 0;
+float VoltageSum = 0;
+int BPM = 0;
+
+typedef struct Heart
+{
+  float value;
+  unsigned long tyme;
+};
+
+typedef struct Peaks
+{
+  float Value;
+  unsigned long Tyme;
+};
+
+Peaks peak_max_array[40];
+Heart peak; //Might want to make this a dynamic array
+
+
 
 void setup()
 {
   Serial.begin(115200);
   
   adc_setup(); // setup ADC
-  startADC();
+  
+  pmc_enable_periph_clk (TC_INTERFACE_ID + 0*3+0) ;  // clock the TC0 channel 0
+
+  TcChannel * t = &(TC0->TC_CHANNEL)[0] ;    // pointer to TC0 registers for its channel 0
+  t->TC_CCR = TC_CCR_CLKDIS ;  // disable internal clocking while setup regs
+  t->TC_IDR = 0xFFFFFFFF ;     // disable interrupts
+  t->TC_SR ;                   // read int status reg to clear pending
+  t->TC_CMR = TC_CMR_TCCLKS_TIMER_CLOCK1 |   // use TCLK1 (prescale by 2, = 42 MHz)
+              TC_CMR_WAVE |                  // waveform mode
+              TC_CMR_WAVSEL_UP_RC |          // count-up PWM using RC as threshold
+              TC_CMR_EEVT_XC0 |     // Set external events from XC0 (this setup TIOB as output)
+              TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_CLEAR |
+              TC_CMR_BCPB_CLEAR | TC_CMR_BCPC_CLEAR ;
+  
+  t->TC_RC =  4200000 ;     // 1000 Hz; counter resets on RC, so sets period in terms of 42MHz clock
+  t->TC_RA =  2100000 ;     // roughly square wave
+  t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
+  
+  t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
+  
+  
+  //startADC();
 
 }
+
+void adc_setup ()
+{
+  NVIC_EnableIRQ (ADC_IRQn) ;   // enable ADC interrupt vector
+  ADC->ADC_IDR = 0xFFFFFFFF ;   // disable interrupts
+  ADC->ADC_IER = 0x80 ;         // enable AD7 End-Of-Conv interrupt (Arduino pin A0)
+  ADC->ADC_CHDR = 0xFFFF ;      // disable all channels
+  ADC->ADC_CHER = 0x80 ;        // enable just A0
+  ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
+  ADC->ADC_COR = 0x00000000 ;   // All offsets off
+  ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
+}
+
+#ifdef __cplusplus
+extern "C" 
+{
+#endif
+
+//////////////////////////
+/*  Inside ADC Handler  */
+//////////////////////////
+void ADC_Handler (void)
+{
+  if (ADC->ADC_ISR & ADC_ISR_EOC7)   // ensure there was an End-of-Conversion and we read the ISR reg
+  {
+    int val = *(ADC->ADC_CDR+7) ;    // get conversion result
+    //Serial.print("ADC value: ");
+    //Serial.println(val);
+    //Serial.println('sup');
+    //Serial.println(micros());
+    peak.value = val;    // get conversion result
+    peak.tyme = millis();
+    //Serial.println(peak.value);
+    adc_flag = 1;
+  
+  }
+
+}
+
+#ifdef __cplusplus
+}
+#endif
 
 void loop()
 {
@@ -36,9 +127,8 @@ void loop()
         peak_max_array[peak_index].Value = (peak.value/4096)*3.3; // convert to a voltage 
         peak_max_array[peak_index].Tyme = peak.tyme;
         //Serial.print("PV: ");
-        //Serial.println(curr_max);
-        //Serial.println(peak.tyme);
         //Serial.println(peak_max_array[peak_index].Value);
+        Serial.println(peak.value);
         VoltageSum = VoltageSum + peak_max_array[peak_index].Value;
         peak_index++;
         curr_max = 1500; // reset to 0 to detect new peaks
@@ -88,49 +178,12 @@ void loop()
   
 }
 
-#ifdef __cplusplus
-extern "C" 
-{
-#endif
-
-//////////////////////////
-/*  Inside ADC Handler  */
-//////////////////////////
-void ADC_Handler (void)
-{
-  if (ADC->ADC_ISR & ADC_ISR_EOC7)   // ensure there was an End-of-Conversion and we read the ISR reg
-  {
-    //int val = *(ADC->ADC_CDR+7) ;    // get conversion result
-    //Serial.print("ADC value: ");
-    //Serial.println(val);
-    //Serial.print('time: ');
-    //Serial.println(micros());
-    peak.value = *(ADC->ADC_CDR+7) ;    // get conversion result
-    peak.tyme = millis();
-    
-    adc_flag = 1;
-  
-  }
-
-}
-
-#ifdef __cplusplus
-}
-#endif
 
 
-void adc_setup ()
-{
-  NVIC_EnableIRQ (ADC_IRQn) ;   // enable ADC interrupt vector
-  ADC->ADC_IDR = 0xFFFFFFFF ;   // disable interrupts
-  ADC->ADC_IER = 0x80 ;         // enable AD7 End-Of-Conv interrupt (Arduino pin A0)
-  ADC->ADC_CHDR = 0xFFFF ;      // disable all channels
-  ADC->ADC_CHER = 0x80 ;        // enable just A0
-  ADC->ADC_CGR = 0x15555555 ;   // All gains set to x1
-  ADC->ADC_COR = 0x00000000 ;   // All offsets off
-  ADC->ADC_MR = (ADC->ADC_MR & 0xFFFFFFF0) | (1 << 1) | ADC_MR_TRGEN ;  // 1 = trig source TIO from TC0
-}
 
+
+
+/*
 void startADC()
 {
   pmc_enable_periph_clk (TC_INTERFACE_ID + 0*3+0) ;  // clock the TC0 channel 0
@@ -151,4 +204,4 @@ void startADC()
   t->TC_CMR = (t->TC_CMR & 0xFFF0FFFF) | TC_CMR_ACPA_CLEAR | TC_CMR_ACPC_SET ;  // set clear and set from RA and RC compares
   
   t->TC_CCR = TC_CCR_CLKEN | TC_CCR_SWTRG ;  // re-enable local clocking and switch to hardware trigger source.
-}
+}*/
