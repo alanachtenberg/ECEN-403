@@ -12,7 +12,7 @@ VIDEO_SOURCE = 0
 
 
 def detect_face(img, cascade):
-    rects = cascade.detectMultiScale(img, scaleFactor=1.2, minNeighbors=4, minSize=(55, 55),
+    rects = cascade.detectMultiScale(img, scaleFactor=1.28, minNeighbors=4, minSize=(50, 50),
                                      flags=cv.CV_HAAR_SCALE_IMAGE)
     if len(rects) == 0:
         return []
