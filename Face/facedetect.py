@@ -12,7 +12,7 @@ VIDEO_SOURCE = 0
 
 
 def detect_face(img, cascade):
-    rects = cascade.detectMultiScale(img, scaleFactor=1.2, minNeighbors=2, minSize=(55, 55),
+    rects = cascade.detectMultiScale(img, scaleFactor=1.2, minNeighbors=4, minSize=(55, 55),
                                      flags=cv.CV_HAAR_SCALE_IMAGE)
     if len(rects) == 0:
         return []
@@ -21,13 +21,12 @@ def detect_face(img, cascade):
 
 
 def detect_eyes(img, cascade):
-    rects = cascade.detectMultiScale(img, scaleFactor=1.1, minNeighbors=3, minSize=(12, 12),
+    rects = cascade.detectMultiScale(img, scaleFactor=1.05, minNeighbors=3, minSize=(10, 10),
                                      flags=cv.CV_HAAR_SCALE_IMAGE)
     if len(rects) == 0:
         return []
     rects[:, 2:] += rects[:, :2]
     return rects
-
 
 def draw_rects(img, rects, color):
     for x1, y1, x2, y2 in rects:
