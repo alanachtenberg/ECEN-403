@@ -12,11 +12,12 @@ VIDEO_SOURCE = 0
 
 
 def detect_face(img, cascade):
+    #returns top left corner (x,y) and size(w,h) in array [x,y,w,h]
     rects = cascade.detectMultiScale(img, scaleFactor=1.28, minNeighbors=4, minSize=(50, 50),
                                      flags=cv.CV_HAAR_SCALE_IMAGE)
     if len(rects) == 0:
         return []
-    rects[:, 2:] += rects[:, :2]
+    rects[:, 2:] += rects[:, :2]# adds the first two elements to the last two elements, to get top left and bottom left points for drawing
     return rects
 
 
@@ -41,11 +42,10 @@ if __name__ == '__main__':
     cam = create_capture(VIDEO_SOURCE, fallback='synth:bg=../cpp/lena.jpg:noise=0.05')
 
     while True:
+        t = clock()
         ret, img = cam.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         gray = cv2.equalizeHist(gray)
-
-        t = clock()
         rects = detect_face(gray, cascade)
         vis = img.copy()
         draw_rects(vis, rects, (0, 255, 0))

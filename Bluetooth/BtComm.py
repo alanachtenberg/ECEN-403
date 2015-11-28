@@ -6,14 +6,11 @@ __author__ = 'alan'
 
 
 class BtComm:
-    DEBUG_MODE = False
     NAME = "UDOO"
     UUID = "1afe39b3-2c5c-4bf4-a2c2-267ee767fd9d"
     RF_PORT = 3
 
     def __init__(self):
-        if not DEBUG_MODE:
-            self.set_device_as_discoverable()
         self.sock = BluetoothSocket(RFCOMM)
         self.sock.bind(("", BtComm.RF_PORT))
         self.sock.listen(1)
@@ -26,7 +23,7 @@ class BtComm:
     @staticmethod
     def set_device_as_discoverable():
         if not os.geteuid() == 0:
-            sys.exit("\nYou must be root to run this application, please   use sudo and try again.\n")
+            sys.exit("\nYou must be root to run this application, please use sudo and try again.\n")
         os.system("sudo hciconfig hci0 piscan")  # sets device as discoverable
 
     def start(self, parse_function):
