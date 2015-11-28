@@ -20,7 +20,7 @@ class BtComm:
         self.port = self.sock.getsockname()[1]
         self.client_sock = None
         self.client_info = None
-        self.parse_function = None
+        self.callback = None
         advertise_service(self.sock, BtComm.NAME, service_id=BtComm.UUID)
 
     @staticmethod
@@ -29,24 +29,23 @@ class BtComm:
             sys.exit("\nYou must be root to run this application, please   use sudo and try again.\n")
         os.system("sudo hciconfig hci0 piscan")  # sets device as discoverable
 
-    def start(self, callback):
+    def start(self, parse_function):
         """Accepts a connection from bluetooth socket and starts a thread which continuously reads
         Writing to socket must be done after it is started.
-        Keyword arguments:
-        callback -- function with 1 param that will parse the input of the client socket in receive_thread
+        :param parse_function: function with 1 param that will parse the input of the client socket in receive_thread
         """
-        self.parse_function = callback
+        self.callback = parse_function
         logging.info("Waiting for connection on RFCOMM channel %d" % self.port);
         self.client_sock, self.client_info = self.sock.accept()
         logging.info("Accepted connection from %s %s", self.client_info[0], self.client_info[1])
-        Thread(target=self.receive_thread)
+        Thread(target=self.receive_thread).start()
 
     def receive_thread(self):
         try:
             while True:
                 data = self.client_sock.recv(1024)
                 logging.info("input data received [%s]" % data)
-                self.parse_function(data)
+                self.callback(data)
         except IOError:
             logging.error("IOError Bluetooth Socket Receive")
             pass
