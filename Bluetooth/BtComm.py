@@ -11,6 +11,7 @@ class BtComm:
     RF_PORT = 3
 
     def __init__(self):
+        self.thread = None
         self.sock = BluetoothSocket(RFCOMM)
         self.sock.bind(("", BtComm.RF_PORT))
         self.sock.listen(1)
@@ -42,10 +43,18 @@ class BtComm:
             while True:
                 data = self.client_sock.recv(1024)
                 logging.info("input data received [%s]" % data)
+                if data == "CLOSING CONNECTION":
+                    logging.info("Client closed connection receive_thread exiting")
+                    self.close()
+                    return
                 self.callback(data)
         except IOError:
-            logging.error("IOError Bluetooth Socket Receive")
+            logging.error("IOError Bluetooth Socket recieve_thread")
             pass
+
+    def close(self):
+        self.sock.close()
+        logging.info("Closed socket")
 
     def send(self, data):
         logging.info("Sending Over Bluetooth %s", data)
