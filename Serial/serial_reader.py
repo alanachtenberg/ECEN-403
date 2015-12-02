@@ -22,7 +22,7 @@ def fill_dict(buf, rDict):
     elif (unloadSerialData(buf, UdooSharedMem['EcgFlag'])[0] == '1'):
         rDict['EcgHdr'] = unloadSerialData(buf, UdooSharedMem['EcgHdr'])[0]
         rDict['BPM'] = unloadSerialData(buf, UdooSharedMem['BPM'])[0]
-		rDict['MbFlag'] = unloadSerialData(buf, UdooSharedMem['MbFlag'])[0]
+        rDict['MbFlag'] = unloadSerialData(buf, UdooSharedMem['MbFlag'])[0]
         rDict['LvpFlag'] = unloadSerialData(buf, UdooSharedMem['LvpFlag'])[0]
         rDict['LvpValue'] = unloadSerialData(buf, UdooSharedMem['LvpValue'])[0]
         rDict['EcgFtr'] = unloadSerialData(buf, UdooSharedMem['EcgFtr'])[0]
@@ -59,18 +59,6 @@ def main():
         ## send BT comm here
         #btcomm.send(json_data)
 
-        
-        #ser0, = unloadSerialData(buf, UdooSharedMem['ser0'])
-        #ser1, = unloadSerialData(buf, UdooSharedMem['ser1'])
-        #ser2, = unloadSerialData(buf, UdooSharedMem['ser2'])
-        #ser3, = unloadSerialData(buf, UdooSharedMem['ser3'])
-        #ser4, = unloadSerialData(buf, UdooSharedMem['ser4'])
- 
-        #print 'ser0: %s' % (ser0)
-        #print 'ser1: %s' % (ser1)
-        #print 'ser2: %s' % (ser2)
-        #print 'ser3: %s' % (ser3)
-        #print 'ser4: %s' % (ser4)
         print 'Press Ctrl-C to exit'
 
   ## Delete fd when done?

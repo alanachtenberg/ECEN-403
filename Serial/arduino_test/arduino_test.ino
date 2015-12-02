@@ -1,4 +1,4 @@
-char EcgHdr = 'e';
+char EcgHdr = 'E';
 float BPM = 60;
 int MbFlag = 1;
 int LvpFlag = 1;
@@ -17,25 +17,23 @@ void setup()
 
 void loop()
 {
-  if (Serial.read = 'E')
-  {
-    Serial.println(EcgHdr);
-    Serial.println(BPM);
-    Serial.println(MbFlag);
-    Serial.println(LvpFlag);
-    Serial.println(LvpValue);
-    Serial.println(EcgFtr);    
-  }
-  
-  if (Serial.read = 'K')
-  {
-    Serial.println(KineHdr);
-    Serial.println(k_val1);
-    Serial.println(zero);
-    Serial.println(zero);
-    Serial.println(zero);
-    Serial.println(KineFtr); 
-  }
+/*
+  Serial.println(EcgHdr);
+  Serial.println(BPM);
+  Serial.println(MbFlag);
+  Serial.println(LvpFlag);
+  Serial.println(LvpValue);
+  Serial.println(EcgFtr);    
+*/
+
+
+  Serial.println(KineHdr);
+  Serial.println(k_val1);
+  Serial.println(zero);
+  Serial.println(zero);
+  Serial.println(zero);
+  Serial.println(KineFtr); 
+
   
 }
 
