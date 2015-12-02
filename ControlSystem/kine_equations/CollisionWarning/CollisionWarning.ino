@@ -4,8 +4,8 @@
 #define    RegisterMeasure     0x00          // Register to write to initiate ranging.
 #define    MeasureValue        0x04          // Value to initiate ranging.
 #define    RegisterHighLowB    0x8f          // Register to get both High and Low bytes in 1 call.
-#define    BUFF_SIZE 20 //size of buffer for time and distance measurements
-#define    TTC_BUFF_SIZE 10
+#define    BUFF_SIZE 10 //size of buffer for time and distance measurements
+#define    TTC_BUFF_SIZE 5
 #define    circum .0007933//1.2767// meters
 #define    rxn_time 2//seconds
 #define    decel_max 3.4 // m/s^2     //2.235//cm/s^2 (assumption)
@@ -33,6 +33,8 @@ float rpm;
 volatile unsigned int quarter_revolutions;
 
 unsigned long timeold;//in milliseconds
+
+unsigned long oldtyme = 0;
 
 void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
   pmc_set_writeprotect(false);
@@ -64,7 +66,7 @@ void setup()
 
 //  adc_setup (); // setup ADC
 //  adc_timer(); // setup timer that triggers ADC conversion
-  startTimer(TC2, 1, TC7_IRQn, 20); // start Lidar timer interrupt .... delta_t = .18s
+  //startTimer(TC2, 1, TC7_IRQn, 1); // start Lidar timer interrupt .... delta_t = .18s
   // TimerClock2, channel 1, IRQ 7 - TC7_Handler, 5Hz sampling rate 
 }
 
@@ -82,13 +84,12 @@ double past_vel;
         //float v2 = v1/2.23694;
         timeold = millis();
         quarter_revolutions = 0;
-//        v_stop_avg = v1/2;
-//        t_stop = (-v1)/(-decel_max);//time to stop based on estimated max decel
-//        d_stop = v_stop_avg*t_stop;//distance to stop
+
+//       t_stop = 1.5 + (-v1)/(-decel_max);//time to stop based on estimated max decel
         //collision ();//Call function to detect if collision may occur
-        //Serial.print("Velocity(mph): ");
-        //Serial.println(time1);
-        //Serial.print("\n");
+        Serial.print("Velocity(mph): ");
+        Serial.println(v1);
+        Serial.print("\n");
         
 //        Serial.print("stopping distance: ");
 //        Serial.println(d_stop);
@@ -103,26 +104,26 @@ double past_vel;
         double curr_dist = get_avg_dist();
          push_smooth_distance(curr_dist);
          double smooth_avg = get_smooth_dist();
-        //Serial.print("Avg Dist : ");
-        //Serial.print(smooth_avg, 4);
-        //Serial.print("\n");
-        //Serial.print(", ");
+        Serial.print("Avg Dist : ");
+        Serial.print(smooth_avg, 4);
+        Serial.print("\n");
+        Serial.print(", ");
         
           
           calc_push_velocity();
           double curr_vel = get_velocity_avg();
-          //Serial.print("Avg Velocity : ");
-          //Serial.print(curr_vel, 4);
-          //Serial.print("\n");
-          //Serial.print(", ");
+        Serial.print("Avg Velocity : ");
+        Serial.print(curr_vel, 4);
+        Serial.print("\n");
+        Serial.print(", ");
 
           
           calc_push_acceleration(curr_vel, past_vel);
           double curr_accel = get_acceleration_avg();
-          //Serial.print("Avg Acceleration : ");
-          //Serial.print(curr_accel, 4);
-          //Serial.print("\n");
-          //Serial.print(", ");
+        Serial.print("Avg Acceleration : ");
+        Serial.print(curr_accel, 4);
+        Serial.print("\n");
+        Serial.print(", ");
           past_vel = curr_vel;
 
 
@@ -132,15 +133,17 @@ double past_vel;
             calc_push_collision(smooth_avg, curr_vel, curr_accel);
            
             double ttc= get_collision_avg();
-            //Serial.print("ttc: ");
-            //Serial.print(ttc, 4); 
-            //Serial.print("\n");
+          Serial.print("ttc: ");
+          Serial.print(ttc, 4); 
+          Serial.print("\n");
             
             
             if (ttc <= 15 && ttc > 3)
               light_yellow();
             else if (ttc <=3 )
               light_red();
+              // send crash data to server
+              // car velocity = v1
             else
               light_green();
           }
@@ -151,8 +154,60 @@ double past_vel;
       wait = 1;
     }
     
+  if (millis() - oldtyme > 50)
+  {
+    oldtyme = millis();
+    //Serial.println(oldtyme);
+    wait = 0;
+    // We need to get the status to clear it and allow the interrupt to fire again
+ 
+    Wire.beginTransmission((int)LIDARLite_ADDRESS); // transmit to LIDAR-Lite
+    Wire.write((int)RegisterMeasure); // sets register pointer to  (0x00)  
+    Wire.write((int)MeasureValue); // sets register pointer to  (0x00)  
+    Wire.endTransmission(); // stop transmitting\
+    delayMicroseconds(20000); // Wait 20ms for transmit
+    Wire.beginTransmission((int)LIDARLite_ADDRESS); // transmit to LIDAR-Lite
+    Wire.write((int)RegisterHighLowB); // sets register pointer to (0x8f)
+    Wire.endTransmission(); // stop transmitting
+  
+    Wire.requestFrom((int)LIDARLite_ADDRESS, 2); // request 2 bytes from LIDAR-Lite
+    while (Wire.available()<2){//waits for two bytes to be available
+      //delay(2);//wait two milliseconds
+    }   
+    reading = Wire.read(); // receive high byte (overwrites previous reading)
+    reading = reading << 8; // shift high byte to be high 8 bits
+    reading |= Wire.read(); // receive low byte as lower 8 bits
+    distance = (double)reading/100 - .5; //convert to meters /100
+    current_time = millis(); //convert to seconds /1000
+    curr_time = (double)current_time/1000;
+    
+    
+    if(distance < 35)
+    {//set max (35 meters) and min (.07 meters) distance values to disregard distance errors 
+    //reset rel_vel calculation if unrealistic change in distance occure
+
+    if(((distance_buff[BUFF_SIZE-1]-distance) > 2 || (distance_buff[BUFF_SIZE-1]-distance) < -2)&&values_read!=0)
+    {
+      values_read = 0;
+      for(int i=0;i<BUFF_SIZE;i++){
+        distance_buff[i] = 0;
+        time_buff[i] = 0;
+       
+      }
+      Serial.println("RESET");
+      return;
+    }
+    push_distance_time(distance, curr_time);
+    Serial.print("Distance(m): ");
+    Serial.println(distance); // print distance
+    ++values_read;//increment values read
+    }
+  } 
+
+    
   }
   
+/*
   void TC7_Handler()
   {
     //interrupts();
@@ -213,6 +268,7 @@ double past_vel;
 
     TC_GetStatus(TC2, 1); // TC2 = Master Clock (84 MHz)/8
  }
+*/
 
 void push_distance_time(double distance, double time){
   for (int i=0;i<BUFF_SIZE-1;++i){//shift all values in queues left
