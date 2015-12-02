@@ -27,7 +27,7 @@ class FaceDetector:
         self.eye_frames = None
 
     def detect_face(self):
-        self.face_frames = cascade.detectMultiScale(img, scaleFactor=1.28, minNeighbors=3, minSize=(60, 60), maxSize=(150,150),
+        self.face_frames = self.face_cascade.detectMultiScale(self.gray_s_frame, scaleFactor=1.28, minNeighbors=3, minSize=(60, 60), maxSize=(150,150),
                                      flags=cv.CV_HAAR_SCALE_IMAGE)
         if len(self.face_frames) == 0:
             self.face_frames = None
@@ -40,7 +40,7 @@ class FaceDetector:
         if len(self.face_frames) > 1:
             logging.error("More than one face detected")
             return False
-        self.eye_frames = cascade.detectMultiScale(img, scaleFactor=1.05, minNeighbors=3, minSize=(13, 13),
+        self.eye_frames = self.eye_cascade.detectMultiScale(self.face_frames, scaleFactor=1.05, minNeighbors=3, minSize=(13, 13),
                                      flags=cv.CV_HAAR_SCALE_IMAGE)
         if len(self.eye_frames) is 0:
             return False
