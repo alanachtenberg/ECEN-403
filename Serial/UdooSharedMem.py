@@ -15,38 +15,43 @@ UdooSharedMem = {
             'Size' : 4
             },
         'LvpFlag' : {
-            'Type' : 'i',
+            'Type' : 'b',
             'Offset' : 9,
-            'Size' : 4
+            'Size' : 1
             },
         'LvpValue' : {
             'Type' : 'f',
-            'Offset' : 13,
+            'Offset' : 10,
             'Size' : 4
             },
         'EcgFtr' : {
             'Type' : 'c',
-            'Offset' : 17,
+            'Offset' : 14,
+            'Size' : 1
+            },
+        'KineFlag' : {
+            'Type' : 'b',
+            'Offset' : 15,
+            'Size' : 1
+            },
+        'EcgFlag' : {
+            'Type' : 'b',
+            'Offset' : 16,
             'Size' : 1
             },
         'KineHdr' : {
             'Type' : 'c',
+            'Offset' : 17,
+            'Size' : 1
+            },
+        'k_val1' : {
+            'Type' : 'f',
             'Offset' : 18,
-            'Size' : 1
+            'Size' : 4
             },
-        'ftr2' : {
+        'KineFtr' : {
             'Type' : 'c',
-            'Offset' : 19,
-            'Size' : 1
-            },
-        'KineFlag' : {
-            'Type' : 'c',
-            'Offset' : 20,
-            'Size' : 1
-            },
-        'EcgFlag' : {
-            'Type' : 'c',
-            'Offset' : 21,
+            'Offset' : 22,
             'Size' : 1
             }
 

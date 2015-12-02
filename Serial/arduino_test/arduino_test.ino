@@ -1,7 +1,7 @@
 char EcgHdr = 'E';
 float BPM = 60;
 int MbFlag = 1;
-int LvpFlag = 1;
+byte LvpFlag = 10;
 float LvpValue = 2;
 char EcgFtr = 'f';
 char KineHdr = 'k';
@@ -17,23 +17,23 @@ void setup()
 
 void loop()
 {
-/*
+
   Serial.println(EcgHdr);
   Serial.println(BPM);
   Serial.println(MbFlag);
   Serial.println(LvpFlag);
   Serial.println(LvpValue);
   Serial.println(EcgFtr);    
-*/
+  //delay(20);
 
-
+/*
   Serial.println(KineHdr);
   Serial.println(k_val1);
   Serial.println(zero);
   Serial.println(zero);
   Serial.println(zero);
   Serial.println(KineFtr); 
-
+*/
   
 }
 
