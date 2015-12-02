@@ -41,9 +41,10 @@ class FaceDetector:
         if len(self.face_frames) > 1:
             logging.error("More than one face detected")
             return False
-        for x1, y1, x2, y2 in self.face_frames:
-            roi = self.gray_s_frame[y1:y2, x1:x2]
-            self.eye_frames = self.eye_cascade.detectMultiScale(roi.copy(), scaleFactor=1.05, minNeighbors=3,
+        roi = self.gray_s_frame[self.face_frames[0][1]:self.face_frames[0][3], self.face_frames[0][0]:self.face_frames[0][2]]
+	logging.debug("roi:")
+	logging.debug(roi)
+        self.eye_frames = self.eye_cascade.detectMultiScale(roi.copy(), scaleFactor=1.05, minNeighbors=3,
                                                             minSize=(13, 13),
                                                             flags=cv.CV_HAAR_SCALE_IMAGE)
         if len(self.eye_frames) is 0:
