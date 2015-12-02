@@ -1,32 +1,53 @@
 UdooSharedMem = {
-        'ser0' : {
-            'Type' : 'f',
+        'EcgHdr' : {
+            'Type' : 'c',
             'Offset' : 0,
-            'Size' : 4
+            'Size' : 1
             },
-        'ser1' : {
+        'BPM' : {
             'Type' : 'f',
-            'Offset' : 4,
+            'Offset' : 1,
             'Size' : 4
             },
-        'ser2' : {
+        'MbFlag' : {
+            'Type' : 'i',
+            'Offset' : 5,
+            'Size' : 4
+            },
+        'LvpFlag' : {
+            'Type' : 'i',
+            'Offset' : 9,
+            'Size' : 4
+            },
+        'LvpValue' : {
             'Type' : 'f',
-            'Offset' : 8,
+            'Offset' : 13,
             'Size' : 4
             },
-        'ser3' : {
-            'Type' : 'f',
-            'Offset' : 12,
-            'Size' : 4
+        'EcgFtr' : {
+            'Type' : 'c',
+            'Offset' : 17,
+            'Size' : 1
             },
-        'ser4' : {
-            'Type' : 'f',
-            'Offset' : 16,
-            'Size' : 4
+        'KineHdr' : {
+            'Type' : 'c',
+            'Offset' : 18,
+            'Size' : 1
             },
-	'ser5' : {
-	    'Type' : 'f',
+        'ftr2' : {
+            'Type' : 'c',
+            'Offset' : 19,
+            'Size' : 1
+            },
+        'KineFlag' : {
+            'Type' : 'c',
             'Offset' : 20,
-            'Size' : 4
-	    }
+            'Size' : 1
+            },
+        'EcgFlag' : {
+            'Type' : 'c',
+            'Offset' : 21,
+            'Size' : 1
+            }
+
         }
