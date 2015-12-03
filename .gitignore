@@ -6,3 +6,4 @@ AndroidApp/gradlew
 AndroidApp/app/proguard-rules.pro
 *.iml
 *.bat
+*.pyc
