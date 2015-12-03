@@ -8,8 +8,8 @@ last_eyes_value = False
 
 rootPath = "/sys/class/gpio/"
 
-output_pin_1 = rootPath +"gpio55/"
-output_pin_2 = rootPath +"gpio57/"
+output_pin_1 = rootPath + "gpio55/"
+output_pin_2 = rootPath + "gpio57/"
 
 
 def face_detection_handler(face, eyes):
@@ -28,24 +28,27 @@ def face_detection_handler(face, eyes):
         if eyes:
             writePinValue(output_pin_2, "1")
         else:
-            writePinValue(output_pin_2, "0")
+             writePinValue(output_pin_2, "0")
 
-def writePinValue(pin , pinValue):
-	os.system("echo "+pinValue+" > "+pin+"value")
-	
+
+def writePinValue(pin, pinValue):
+    os.system("echo " + pinValue + " > " + pin + "value")
+
+
 def initGPIO():
-	logging.info("Initializing GPIO pins: "+output_pin_1+" "+output_pin_2)
-	os.system("echo out > "+output_pin_1+ "direction")
-	os.system("echo out > "+output_pin_2+ "direction")
-	writePinValue(output_pin_1,"0")
-	writePinValue(output_pin_2,"0")
-	
+    logging.info("Initializing GPIO pins: " + output_pin_1 + " " + output_pin_2)
+    os.system("echo out > " + output_pin_1 + "direction")
+    os.system("echo out > " + output_pin_2 + "direction")
+    writePinValue(output_pin_1, "0")
+    writePinValue(output_pin_2, "0")
+
+
 if __name__ == '__main__':
     logging.basicConfig(handlers=[logging.StreamHandler()], level=logging.DEBUG)
     initGPIO()
-    face_detector = FaceDetector(3)
+    face_detector = FaceDetector(0)
     face_detector.start(face_detection_handler)
     while True:
-	time.sleep(10)
+        time.sleep(10)
     print("main exit")
     sys.exit()
