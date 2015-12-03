@@ -8,7 +8,7 @@ import serial
 import time
 import logging
 
-ser = serial.Serial('/dev/ttyACM0', 115200) # create serial object, non blocking reads
+ser = serial.Serial('/dev/ttyACM0', 115200) # create serial object, blocking reads
 #ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
 #ser = serial.Serial('/dev/ttymxc3', 115200, timeout = 0) # create serial object, non blocking reads
 ser.flushOutput()
@@ -35,7 +35,7 @@ class UdooHighLevelGateway:
         self.offset += struct.calcsize(self.BPM._type_)
         self.MbFlag = ctypes.c_int.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.MbFlag._type_)
-        self.LvpFlag = ctypes.c_int.from_buffer(buf, self.offset)
+        self.LvpFlag = ctypes.c_byte.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.LvpFlag._type_)
         self.LvpValue = ctypes.c_float.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.LvpValue._type_)
@@ -47,9 +47,9 @@ class UdooHighLevelGateway:
         self.offset += struct.calcsize(self.k_val1._type_)
         self.KineFtr = ctypes.c_char.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.KineFtr._type_)
-        self.KineFlag = ctypes.c_char.from_buffer(buf, self.offset)
+        self.KineFlag = ctypes.c_byte.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.KineFlag._type_)
-        self.EcgFlag = ctypes.c_char.from_buffer(buf, self.offset)
+        self.EcgFlag = ctypes.c_byte.from_buffer(buf, self.offset)
         self.offset += struct.calcsize(self.EcgFlag._type_)
   
 
@@ -63,6 +63,9 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
             serialValueDict['BPM'] = serialValues.get()
             serialValueDict['MbFlag'] = serialValues.get()
             serialValueDict['LvpFlag'] = serialValues.get()
+            #LvpFlag = serialValues.get()
+            #print('LvpFlag: ')
+            #print(LvpFlag)
             serialValueDict['LvpValue'] = serialValues.get()
             serialValueDict['EcgFtr'] = 'f' 
             none = serialValues.get()
@@ -77,15 +80,15 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
                 UdooGate.LvpFlag.value = int(serialValueDict['LvpFlag'])
                 UdooGate.LvpValue.value = float(serialValueDict['LvpValue'])
                 UdooGate.EcgFtr.value = serialValueDict['EcgFtr']
-                UdooGate.EcgFlag.value = '1'
+                UdooGate.EcgFlag.value = 1
 
             except ValueError:
+                print('some error occured')
                 pass
 
             break
 
         elif 'k' in data:        
-            print('reached')
             serialValueDict['KineHdr'] = 'k'
             serialValueDict['k_val1'] = serialValues.get()
             serialValueDict['KineFtr'] = 'f' 
@@ -98,7 +101,7 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
                 UdooGate.KineHdr.value = serialValueDict['KineHdr']
                 UdooGate.k_val1.value = float(serialValueDict['k_val1'])
                 UdooGate.KineFtr.value = serialValueDict['KineFtr']
-                UdooGate.KineFlag.value = '1'
+                UdooGate.KineFlag.value = 1
 
             except ValueError:
                 pass
@@ -146,13 +149,6 @@ def main():
         serialValues.put(sData3)
         serialValues.put(sData4)
         serialValues.put(sData5)
-
-        #print(sData0)
-        #print(sData1)
-        #print(sData2)
-        #print(sData3)
-        #print(sData4)
-        #print(sData5)
 
         fill_dict(serialValues, UdooGate, serialValueDict)
         
