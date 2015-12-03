@@ -36,7 +36,9 @@ class BtComm:
         logging.info("Waiting for connection on RFCOMM channel %d" % self.port);
         self.client_sock, self.client_info = self.sock.accept()
         logging.info("Accepted connection from %s %s", self.client_info[0], self.client_info[1])
-        Thread(target=self.receive_thread).start()
+        thread = Thread(target=self.receive_thread)
+        thread.daemon = True
+        thread.start()
 
     def receive_thread(self):
         try:
