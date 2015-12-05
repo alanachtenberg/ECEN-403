@@ -8,8 +8,8 @@ import serial
 import time
 import logging
 
-#ser = serial.Serial('/dev/ttyACM0', 115200) # create serial object, blocking reads
-ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
+ser = serial.Serial('/dev/ttyACM0', 115200) # create serial object, blocking reads
+#ser = serial.Serial('/dev/ttymxc3', 115200) # create serial object, blocking reads
 #ser = serial.Serial('/dev/ttymxc3', 115200, timeout = 0) # create serial object, non blocking reads
 ser.flushOutput()
   
@@ -80,13 +80,13 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
             print(serialValueDict)
             
             try:
-                UdooGate.EcgFlag.value = float(1.0)
-                UdooGate.EcgHdr.value = serialValueDict['EcgHdr']
-                UdooGate.BPM.value = float(serialValueDict['BPM'])
-                UdooGate.MbFlag.value = int(serialValueDict['MbFlag'])
-                UdooGate.LvpFlag.value = int(serialValueDict['LvpFlag'])
-                UdooGate.LvpValue.value = float(serialValueDict['LvpValue'])
-                UdooGate.EcgFtr.value = serialValueDict['EcgFtr']
+                #UdooGate.EcgFlag.value = float(1.0)
+                #UdooGate.EcgHdr.value = serialValueDict['EcgHdr']
+                #UdooGate.BPM.value = float(serialValueDict['BPM'])
+                #UdooGate.MbFlag.value = int(serialValueDict['MbFlag'])
+                #UdooGate.LvpFlag.value = int(serialValueDict['LvpFlag'])
+                #UdooGate.LvpValue.value = float(serialValueDict['LvpValue'])
+                #UdooGate.EcgFtr.value = serialValueDict['EcgFtr']
                 
                 
 
@@ -94,7 +94,7 @@ def fill_dict(serialValues, UdooGate, serialValueDict):
                 print('ValueError')
                 pass
 
-            print(UdooGate.EcgFlag.value)
+            #print(UdooGate.EcgFlag.value)
             #print(UdooGate.EcgHdr.value)
             #print(UdooGate.BPM.value)
             break
