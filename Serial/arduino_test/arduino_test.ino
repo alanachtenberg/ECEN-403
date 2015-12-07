@@ -17,6 +17,7 @@ void setup()
 
 void loop()
 {
+<<<<<<< Updated upstream
 
   Serial.println(EcgHdr);
   Serial.println(BPM);
@@ -33,6 +34,22 @@ void loop()
   Serial.println(zero);
   Serial.println(zero);
   Serial.println(KineFtr); 
+=======
+    Serial.println(EcgHdr);
+    Serial.println(BPM);
+    Serial.println(MbFlag);
+    Serial.println(LvpFlag);
+    Serial.println(LvpValue);
+    Serial.println(EcgFtr);    
+
+/*  
+    Serial.println(KineHdr);
+    Serial.println(k_val1);
+    Serial.println(zero);
+    Serial.println(zero);
+    Serial.println(zero);
+    Serial.println(KineFtr); 
+>>>>>>> Stashed changes
 */
   
 }
