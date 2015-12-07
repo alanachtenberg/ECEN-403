@@ -94,7 +94,7 @@ if __name__ == '__main__':
         sData3 = ser.readline()
         sData4 = ser.readline()
         sData5 = ser.readline()
-
+        logging.debug("Received data over serial port ", sData0, sData1, sData2, sData3, sData4, sData5)
         serialValues.put(sData0)
         serialValues.put(sData1)
         serialValues.put(sData2)
